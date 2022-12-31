@@ -1,0 +1,53 @@
+================================================================================
+                                                               *date-time-inserter.nvim*
+
+This plugin helps you to easily insert the current date/time into the current
+buffer. See examples below:
+
+
+                                                             *date-time-inserter.insert_date()*
+
+date-time-inserter.insert_date()
+
+    Insert the current date on the current cursor position. See example below:
+>
+       date-time-inserter.insert_time()
+<
+                                                              *date-time-inserter.insert_time()*
+
+date-time-inserter.insert_time()
+
+    Insert the current time on the current cursor position. See example below:
+>
+       date-time-inserter.insert_time()
+<
+                                                              *date-time-inserter.setup()*
+
+date-time-inserter.setup(opts)
+
+    Configure your plugin settings. See example below (these are the defaults):
+>
+    local date_time_inserter_status_ok, date_time_inserter = pcall(require, "date-time-inserter")
+    if not date_time_inserter_status_ok then
+        date_time_inserter = {}
+    end
+
+    date_time_inserter.setup {
+        date_format = 'MMDDYYYY',
+        date_separator = '/',
+        time_format = 12,
+        show_seconds = false,
+    }
+<
+
+    You can customize the following settings:
+
+    -   `date_format`: The format of the date. You can use the letters 'Y', 'M', and 'D' to represent the year, month, and day, respectively. The order of the letters determines the order of the date.
+        -   For example, 'MMDDYYYY' will result in a date in the format '12/31/2022'.
+    -   `time_format`: The format of the time. Set to 12 for 12 hour time or 24 for 24 hour time.
+        -   For example, '12' will result in 1:00 PM instead of 13:00.
+    -   `date_separator`: The character to use as a separator between the different parts of the date.
+        -   For example, a '-' will result in 12-31-2022.
+    -   `show_seconds`: Whether to include seconds in the time. Set to true to show seconds or false to hide them.
+
+ vim:tw=78:ts=8:ft=help:norl:
