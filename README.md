@@ -68,13 +68,13 @@ END
 ```lua
 local date_time_inserter_status_ok, date_time_inserter = pcall(require, "date-time-inserter")
 if not date_time_inserter_status_ok then
-    date_time_inserter = {}
+    return
 end
 
 date_time_inserter.setup {
     date_format = 'MMDDYYYY',
     date_separator = '/',
-    time_format = 24,
+    time_format = 12,
     show_seconds = false,
 }
 ```
