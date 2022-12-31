@@ -104,6 +104,7 @@ You can use the plugin by adding the following lines of code to the [configurati
 ```lua
 vim.keymap.set('n', '<leader>dt', date_time_inserter.insert_date, {noremap = true, silent = true})
 vim.keymap.set('n', '<leader>tt', date_time_inserter.insert_time, {noremap = true, silent = true})
+vim.keymap.set('n', '<leader>dtt', date_time_inserter.insert_date_time, {noremap = true, silent = true})
 ```
 
 ## License
