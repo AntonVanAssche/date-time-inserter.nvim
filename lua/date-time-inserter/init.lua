@@ -103,6 +103,7 @@ end
 
 -- Insert the current date into the current buffer.
 -- The date will be inserted at the cursor position.
+-- Example: 12/31/2022
 M.insert_date = function()
     -- Get the current date.
     local date = os.date('%Y-%m-%d')
@@ -116,6 +117,7 @@ end
 
 -- Insert the current time into the current buffer.
 -- The time will be inserted at the cursor position.
+-- Example: 13:00:00 PM
 M.insert_time = function()
     -- Get the current time.
     local time = os.date('%H:%M:%S')
@@ -127,6 +129,9 @@ M.insert_time = function()
     vim.api.nvim_put({time_format}, 'c', true, true)
 end
 
+-- Insert the current date and time into the current buffer.
+-- The date and time will be inserted at the cursor position.
+-- Example: 12/31/2022 at 1:00:00 PM
 M.insert_date_time = function()
     -- Get the current date and time.
     local date = os.date('%Y-%m-%d')
