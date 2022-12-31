@@ -1,5 +1,5 @@
 ================================================================================
-                                                               *date-time-inserter.nvim*
+                                                             *date-time-inserter.nvim*
 
 This plugin helps you to easily insert the current date/time into the current
 buffer. See examples below:
@@ -20,6 +20,15 @@ date-time-inserter.insert_time()
     Insert the current time on the current cursor position. See example below:
 >
        date-time-inserter.insert_time()
+<
+
+                                                              *date-time-inserter.insert_date_time()*
+
+date-time-inserter.insert_date_time()
+
+    Insert the current date and time on the current cursor position. See example below:
+>
+       date-time-inserter.insert_date_time()
 <
                                                               *date-time-inserter.setup()*
 

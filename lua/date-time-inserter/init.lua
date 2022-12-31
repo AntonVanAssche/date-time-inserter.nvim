@@ -127,4 +127,17 @@ M.insert_time = function()
     vim.api.nvim_put({time_format}, 'c', true, true)
 end
 
+M.insert_date_time = function()
+    -- Get the current date and time.
+    local date = os.date('%Y-%m-%d')
+    local time = os.date('%H:%M:%S')
+
+    -- Convert the date and time to the format specified in the settings.
+    local date_format = convert_date_to_config_format(date)
+    local time_format = convert_time_to_config_format(time)
+
+    -- Insert the date and time at the cursor position.
+    vim.api.nvim_put({date_format .. ' at ' .. time_format}, 'c', true, true)
+end
+
 return M
