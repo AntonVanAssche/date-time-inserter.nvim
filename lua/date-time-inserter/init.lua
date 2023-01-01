@@ -2,14 +2,18 @@ local M = {}
 
 -- Default settings.
 local settings = {
-    date_format = 'MMDDYYYY', -- DDMMYYYY, MMDDYYYY, YYYYMMDD or whatever you want.
-                              -- As long as it's in the same format without spaces or other characters.
+    date_format = 'MMDDYYYY',               -- DDMMYYYY, MMDDYYYY, YYYYMMDD or whatever you want.
+                                            -- As long as it's in the same format without spaces or other characters.
 
-    date_separator = '/',     -- Character used to separate the date parts.
+    date_separator = '/',                   -- Character used to separate the date parts.
 
-    time_format = 12,         -- Can be 24 or 12 for 24 hour or 12 hour time.
+    time_format = 12,                       -- Can be 24 or 12 for 24 hour or 12 hour time.
 
-    show_seconds = false,     -- Whether to show seconds in the time (true) or not (false)
+    show_seconds = false,                   -- Whether to show seconds in the time (true) or not (false)
+
+    insert_date_map = '<leader>dt',         -- Keymap to insert the date (in 'normal' mode).
+    insert_time_map = '<leader>tt',         -- Keymap to insert the time (in 'normal' mode).
+    insert_date_time_map = '<leader>dtt',   -- Keymap to insert the date and time (in 'normal' mode).
 }
 
 -- Convert the date returned by os.date() to the format specified in the settings.
@@ -90,6 +94,15 @@ local function convert_time_to_config_format(time)
     return time
 end
 
+-- Set keymaps for the plugin.
+-- @param key: Key to assign the keymap to.
+-- @param command: Command to execute when the keymap is pressed.
+local function set_keymap(key, command)
+    local keymap = vim.keymap.set
+    local opts = { noremap = true, silent = true }
+    keymap('n', key, command, opts)
+end
+
 -- Set the settings, if any where passed.
 -- If none are passed, the default settings will be used.
 -- @param opts: Plugin settings.
@@ -99,6 +112,10 @@ M.setup = function(opts)
             settings[k] = v
         end
     end
+    -- Set the keymaps for the plugin.
+    set_keymap(settings.insert_date_map, M.insert_date)
+    set_keymap(settings.insert_time_map, M.insert_time)
+    set_keymap(settings.insert_date_time_map, M.insert_date_time)
 end
 
 -- Insert the current date into the current buffer.
