@@ -25,7 +25,7 @@ Jokes a side feedback and suggestions are **ALWAYS** welcome 😉!
 
 ### Using [Packer](https://github.com/wbthomason/packer.nvim)
 
-1. Add this to your vim config:
+1. Add this to your Neovim config:
 
 ```lua
 use { 'AntonVanAssche/date-time-inserter.nvim' }
@@ -35,7 +35,7 @@ use { 'AntonVanAssche/date-time-inserter.nvim' }
 
 ### Using [Vim-Plug](https://github.com/junegunn/vim-plug)
 
-1. Add the following to your vim config:
+1. Add the following to your Neovim config:
 
 ```vim
 Plug 'AntonVanAssche/date-time-inserter.nvim'
@@ -76,6 +76,9 @@ date_time_inserter.setup {
     date_separator = '/',
     time_format = 12,
     show_seconds = false,
+    insert_date_map = '<leader>dt',
+    insert_time_map = '<leader>tt',
+    insert_date_time_map = '<leader>dtt',
 }
 ```
 
@@ -88,6 +91,13 @@ You can customize the following settings:
 -   `date_separator`: The character to use as a separator between the different parts of the date.
     -   For example, a '-' will result in 12-31-2022.
 -   `show_seconds`: Whether to include seconds in the time. Set to true to show seconds or false to hide them.
+    -   For example, 'true' will result in 11:59:41 AM instead of 11:59 AM.
+-   `insert_date_map`: The keymap (in normal mode) used to insert the date.
+    -   For example, when the key combination '<leader>dt' is pressed, the date will be inserted.
+-   `insert_time_map`: The keymap (in normal mode) used to insert the time.
+    -   For example, when the key combination '<leader>tt' is pressed, the time will be inserted.
+-   `insert_date_time_map`: The keymap (in normal mode) used to insert the date and time.
+    -   For example, when the key combination '<leader>dtt' is pressed, the date and time will be inserted.
 
 #### Starting Date Time Inserter
 
@@ -95,16 +105,26 @@ You can customize the following settings:
 require('date-time-inserter').setup()
 ```
 
-**NOTE**: This will start Date Time Inserter with it's default configuration.
+**NOTE**: This will start Date Time Inserter with it's default configuration (refer to the header above).
 
 ## Usage
 
-You can use the plugin by adding the following lines of code to the [configuration file](#default-configuration) mentioned above.
+### Using keybindings
 
-```lua
-vim.keymap.set('n', '<leader>dt', date_time_inserter.insert_date, {noremap = true, silent = true})
-vim.keymap.set('n', '<leader>tt', date_time_inserter.insert_time, {noremap = true, silent = true})
-vim.keymap.set('n', '<leader>dtt', date_time_inserter.insert_date_time, {noremap = true, silent = true})
+To use Date Time Inserter, you simply need to press the key combination you specified in the configuration file.
+For example, if you set insert_date_map to '<leader>dt', pressing <leader>dt in normal mode will insert the current date into the buffer.
+Similarly, pressing the key combination you specified for insert_time_map or insert_date_time_map will insert the current time or both the date and time, respectively.
+
+### Using commands
+
+You can also use the :InsertDate, :InsertTime, and :InsertDateTime commands in normal mode or in your vimrc/init.lua file to insert the date, time, or both, respectively.
+
+For example:
+
+```
+:InsertDate
+:InsertTime
+:InsertDateTime
 ```
 
 ## License
