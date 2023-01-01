@@ -117,7 +117,7 @@ Similarly, pressing the key combination you specified for insert_time_map or ins
 
 ### Using commands
 
-You can also use the :InsertDate, :InsertTime, and :InsertDateTime commands in normal mode or in your vimrc/init.lua file to insert the date, time, or both, respectively.
+You can also use the commands like ':InsertDate', ':InsertTime', and ':InsertDateTime' to call the plugin (in normal mode).
 
 For example:
 
