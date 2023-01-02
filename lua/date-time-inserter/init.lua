@@ -16,11 +16,62 @@ local settings = {
     insert_date_time_map = '<leader>dtt',   -- Keymap to insert the date and time (in 'normal' mode).
 }
 
+-- Validate whether the configured date format is valid.
+-- When it's not, the default format will be used.
+-- @param date_format The date format to validate.
+local function validate_date_format(date_format)
+    -- Check if the date format has the correct length.
+    if string.len(date_format) ~= 8 then
+        print('INVALID_DATE_FORMAT: Date format must be 8 characters long (e.g. MMDDYYYY).')
+        return 'MMDDYYYY'
+    end
+
+    -- Check wheter the date format contains all the required characters.
+    if not string.find(date_format, 'M') or not string.find(date_format, 'D') or not string.find(date_format, 'Y') then
+        print('INVALID_DATE_FORMAT: Date format must contain the characters M, D and Y (e.g. MMDDYYYY).')
+        return 'MMDDYYYY'
+    end
+
+    -- Check if the date format contains the string 'DD' once.
+    if string.find(date_format, 'DD') == nil then
+        print('INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the \'DD\' string (e.g. MMDDYYYY).')
+        return 'MMDDYYYY'
+    end
+
+    -- Check if the date format contains the string 'MM' once.
+    if string.find(date_format, 'MM') == nil then
+        print('INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the \'MM\' string (e.g. MMDDYYYY).')
+        return 'MMDDYYYY'
+    end
+
+    -- Check if the date format contains the string 'YYYY' once.
+    if string.find(date_format, 'YYYY') == nil then
+        print('INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the \'YYYY\' string (e.g. MMDDYYYY).')
+        return 'MMDDYYYY'
+    end
+
+    return date_format
+end
+
+-- Validate whether the configured time format is valid.
+-- When it's not, the default format will be used.
+-- @param time_format The time format to validate.
+local function validate_time_format(time_format)
+    if time_format ~= 12 and time_format ~= 24 then
+        print('INVALID_TIME_FORMAT: Time format must be either 12 or 24.')
+        return 12
+    end
+
+    return time_format
+end
+
 -- Convert the date returned by os.date() to the format specified in the settings.
 -- @param date: Date returned by os.date().
 local function convert_date_to_config_format(date)
     -- Convert the format to uppercase, safety guard in case the user used lowercase letters.
-    local date_format = string.upper(settings.date_format)
+    -- Validate the date format specified by the user.
+    -- Fall back to the default format if the user specified an invalid format.
+    local date_format = validate_date_format(string.upper(settings.date_format))
     local separator = settings.date_separator
     local new_date = ''
 
@@ -60,7 +111,9 @@ end
 -- Convert the time returned by os.date() to the format specified in the settings.
 -- @param time: Time returned by os.date().
 local function convert_time_to_config_format(time)
-    local time_format = settings.time_format
+    -- Validate the time format specified by the user.
+    -- Fall back to the default format if the user specified an invalid format.
+    local time_format = validate_time_format(settings.time_format)
 
     -- Extract the hour, minute and second from the time string
     local hour = time:sub(1, 2)
