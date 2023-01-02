@@ -169,12 +169,6 @@ M.setup = function(opts)
     set_keymap(settings.insert_date_map, M.insert_date)
     set_keymap(settings.insert_time_map, M.insert_time)
     set_keymap(settings.insert_date_time_map, M.insert_date_time)
-
-    -- Make sure the user can use `InsertDate` to insert the date.
-    -- This is useful if the user wants to use the plugin without keymaps.
-    vim.api.nvim_command("command! -nargs=0 InsertDate lua require('date-time-inserter').insert_date()")
-    vim.api.nvim_command("command! -nargs=0 InsertTime lua require('date-time-inserter').insert_time()")
-    vim.api.nvim_command("command! -nargs=0 InsertDateTime lua require('date-time-inserter').insert_date_time()")
 end
 
 -- Insert the current date into the current buffer.
