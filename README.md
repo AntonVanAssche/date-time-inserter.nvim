@@ -63,7 +63,8 @@ END
 
 ### Configuring Date Time Inserter in init.lua
 
-#### Default configuration
+Here is an example of how you can configure the plugin in your init.lua file.
+The example below shows the default configuration, which you can customize by modifying the values of the different settings.
 
 ```lua
 local date_time_inserter_status_ok, date_time_inserter = pcall(require, "date-time-inserter")
@@ -99,13 +100,7 @@ You can customize the following settings:
 -   `insert_date_time_map`: The keymap (in normal mode) used to insert the date and time.
     -   For example, when the key combination '<leader>dtt' is pressed, the date and time will be inserted.
 
-#### Starting Date Time Inserter
-
-```lua
-require('date-time-inserter').setup()
-```
-
-**NOTE**: This will start Date Time Inserter with it's default configuration (refer to the header above).
+If you do not configure Date Time Inserter or leave certain settings unconfigured, it will use its default settings for those settings.
 
 ## Usage
 
