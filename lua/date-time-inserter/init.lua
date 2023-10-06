@@ -156,6 +156,12 @@ local function set_keymap(key, command)
     keymap('n', key, command, opts)
 end
 
+-- Check if a setting is nil or empty.
+-- @param setting: The setting to check.
+local function setting_is_empty(setting)
+    return setting == nil or setting == ''
+end
+
 -- Set the settings, if any where passed.
 -- If none are passed, the default settings will be used.
 -- @param opts: Plugin settings.
@@ -165,10 +171,18 @@ M.setup = function(opts)
             settings[k] = v
         end
     end
-    -- Set the keymaps for the plugin.
-    set_keymap(settings.insert_date_map, M.insert_date)
-    set_keymap(settings.insert_time_map, M.insert_time)
-    set_keymap(settings.insert_date_time_map, M.insert_date_time)
+
+    if not setting_is_empty(opts.insert_date_time_map) then
+        set_keymap(opts.insert_date_time_map, M.insert_date_time)
+    end
+
+    if not setting_is_empty(opts.insert_time_map) then
+        set_keymap(opts.insert_time_map, M.insert_time)
+    end
+
+    if not setting_is_empty(opts.insert_date_map) then
+        set_keymap(opts.insert_date_map, M.insert_date)
+    end
 end
 
 -- Insert the current date into the current buffer.
