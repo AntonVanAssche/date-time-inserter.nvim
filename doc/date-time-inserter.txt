@@ -1,72 +1,39 @@
-================================================================================
-                                                             *date-time-inserter.nvim*
+*date-time-inserter.txt*  Easily insert the current date and/or time into
+                        your Neovim buffer.
+*DateTimeInserter*
 
-This plugin helps you to easily insert the current date/time into the current
-buffer. See examples below:
+License: MIT
+Author: Anton Van Assche <https://github.com/AntonVanAssche/>
 
-To use Date Time Inserter, you simply need to press the key combination you specified in the configuration file.
-For example, if you set insert_date_map to '<leader>dt', pressing <leader>dt in normal mode will insert the current date into the buffer.
-Similarly, pressing the key combination you specified for insert_time_map or insert_date_time_map will insert the current time or both the date and time, respectively.
+===============================================================================
+CONTENTS                                                  *DateTimeInserter-TOC*
 
-You can also use the :InsertDate, :InsertTime, and :InsertDateTime commands in normal mode or in your vimrc/init.lua file to insert the date, time, or both, respectively.
+    1. Commands.............|date-time-inserter-commands|
+    2. Configuration........|date-time-inserter-configuration|
 
-For example:
+===============================================================================
+
+1. Commands                                            *DateTimeInserterCommands*
+
+InsertDate                                                         *:InsertDate*
+
+    This will insert the current date at the cursor position.
+
+InsertTime                                                         *:InsertTime*
+
+    This will insert the current time at the cursor position.
+
+InsertDateTime                                                 *:InsertDateTime*
+
+    This will insert the current date and time at the cursor position.
+
+===============================================================================
+2. Configuration                                 *DateTimeInserterConfiguration*
+
+    Date Time Inserter can be configured by calling its `setup` function.
 
 >
-    :InsertDate
-    :InsertTime
-    :InsertDateTime
-<
-
-                                                             *date-time-inserter.insert_date()*
-
-date-time-inserter.insert_date()
-
-    Insert the current date on the current cursor position. See example below:
->
-       date-time-inserter.insert_time()
-<
-    Alternatively, you can use the following command to insert the current date:
->
-        :InsertDate
-<
-                                                              *date-time-inserter.insert_time()*
-
-date-time-inserter.insert_time()
-
-    Insert the current time on the current cursor position. See example below:
->
-       date-time-inserter.insert_time()
-<
-    Alternatively, you can use the following command to insert the current time:
->
-        :InsertTime
-<
-
-                                                              *date-time-inserter.insert_date_time()*
-
-date-time-inserter.insert_date_time()
-
-    Insert the current date and time on the current cursor position. See example below:
->
-       date-time-inserter.insert_date_time()
-<
-    Alternatively, you can use the following command to insert the current date and time:
->
-        :InsertDateTime
-<
-                                                              *date-time-inserter.setup()*
-
-date-time-inserter.setup(opts)
-
-    Configure your plugin settings. See example below (these are the defaults):
->
-    local date_time_inserter_status_ok, date_time_inserter = pcall(require, "date-time-inserter")
-    if not date_time_inserter_status_ok then
-        date_time_inserter = {}
-    end
-
-    date_time_inserter.setup {
+    require("date-time-inserter").setup {
         date_format = 'MMDDYYYY',
         date_separator = '/',
         time_format = 12,
@@ -78,22 +45,51 @@ date-time-inserter.setup(opts)
     }
 <
 
-    You can customize the following settings:
+`date_format`:
+    The format of the date. You can use the letters 'Y', 'M', and 'D' to
+    represent the year, month, and day, respectively. The order of the letters
+    determines the order of the date.
 
-    -   `date_format`: The format of the date. You can use the letters 'Y', 'M', and 'D' to represent the year, month, and day, respectively. The order of the letters determines the order of the date.
-        -   For example, 'MMDDYYYY' will result in a date in the format '12/31/2022'.
-    -   `time_format`: The format of the time. Set to 12 for 12 hour time or 24 for 24 hour time.
-        -   For example, '12' will result in 1:00 PM instead of 13:00.
-    -   `date_separator`: The character to use as a separator between the different parts of the date.
-        -   For example, a '-' will result in 12-31-2022.
-    -   `show_seconds`: Whether to include seconds in the time. Set to true to show seconds or false to hide them.
-        -   For example, 'true' will result in 11:59:41 AM instead of 11:59 AM.
-    -   `insert_date_map`: The keymap (in normal mode) used to insert the date.
-        -   For example, when the key combination '<leader>dt' is pressed, the date will be inserted.
-    -   `insert_time_map`: The keymap (in normal mode) used to insert the time.
-        -   For example, when the key combination '<leader>tt' is pressed, the time will be inserted.
-    -   `insert_date_time_map`: The keymap (in normal mode) used to insert the date and time.
-        -   For example, when the key combination '<leader>dtt' is pressed, the date and time will be inserted.
-    -   `show_seconds`: Whether to include seconds in the time. Set to true to show seconds or false to hide them.
+    For example, 'MMDDYYYY' will result in a date in the format '12/31/2022'.
 
- vim:tw=78:ts=8:ft=help:norl:
+`time_format`:
+    The format of the time. Set to 12 for 12 hour time or 24 for 24 hour time.
+
+    For example, '12' will result in 1:00 PM instead of 13:00.
+
+`date_separator`:
+    The character to use as a separator between the different parts of the
+    date.
+
+    For example, a '-' will result in 12-31-2022.
+
+`show_seconds`:
+    Whether to include seconds in the time. Set to true to show seconds or
+    false to hide them.
+
+    For example, 'true' will result in 11:59:41 AM instead of 11:59 AM.
+
+`insert_date_map`:
+    The keymap (in normal mode) used to insert the date.
+
+    For example, when the key combination '<leader>dt' is pressed, the date
+    will be inserted.
+
+`insert_time_map`:
+    The keymap (in normal mode) used to insert the time.
+
+    For example, when the key combination '<leader>tt' is pressed, the time
+    will be inserted.
+
+`insert_date_time_map`:
+    The keymap (in normal mode) used to insert the date and time.
+
+    For example, when the key combination '<leader>dtt' is pressed, the date
+    and time will be inserted.
+
+`show_seconds`:
+    Whether to include seconds in the time. Set to `true` to show seconds or
+    `false` to hide them.
+
+===============================================================================
+vim:tw=78:ts=2:sts=2:sw=2:ft=help:norl:
