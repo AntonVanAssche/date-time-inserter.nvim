@@ -1,11 +1,14 @@
 local M = {}
 
 -- Default settings.
+local default_date_format = "MMDDYYYY"
+local default_time_format = 12
+
 local settings = {
-    date_format = "MMDDYYYY", -- DDMMYYYY, MMDDYYYY, YYYYMMDD or whatever you want.
+    date_format = default_date_format, -- DDMMYYYY, MMDDYYYY, YYYYMMDD or whatever you want.
     date_separator = "/", -- Character used to separate the date parts.
 
-    time_format = 12, -- Can be 24 or 12 for 24 hour or 12 hour time.
+    time_format = default_time_format, -- Can be 24 or 12 for 24 hour or 12 hour time.
     show_seconds = false, -- Whether to show seconds in the time (true) or not (false)
 
     insert_date_map = "<leader>dt", -- Keymap to insert the date (in 'normal' mode).
@@ -20,7 +23,7 @@ local function validate_date_format(date_format)
     -- Check if the date format has the correct length.
     if string.len(date_format) ~= 8 then
         print("INVALID_DATE_FORMAT: Date format must be 8 characters long (e.g. MMDDYYYY).")
-        return settings.date_format
+        return default_date_format
     end
 
     -- Check wheter the date format contains all the required characters.
@@ -32,7 +35,7 @@ local function validate_date_format(date_format)
         print(
             "INVALID_DATE_FORMAT: Date format must contain the characters M, D and Y (e.g. MMDDYYYY)."
         )
-        return settings.date_format
+        return default_date_format
     end
 
     -- Check if the date format contains the string 'DD' once.
@@ -40,7 +43,7 @@ local function validate_date_format(date_format)
         print(
             'INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the "DD" string (e.g. MMDDYYYY).'
         )
-        return settings.date_format
+        return default_date_format
     end
 
     -- Check if the date format contains the string 'MM' once.
@@ -48,7 +51,7 @@ local function validate_date_format(date_format)
         print(
             'INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the "MM" string (e.g. MMDDYYYY).'
         )
-        return settings.date_format
+        return default_date_format
     end
 
     -- Check if the date format contains the string 'YYYY' once.
@@ -56,7 +59,7 @@ local function validate_date_format(date_format)
         print(
             'INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the "YYYY" string (e.g. MMDDYYYY).'
         )
-        return settings.date_format
+        return default_date_format
     end
 
     return date_format
@@ -68,7 +71,7 @@ end
 local function validate_time_format(time_format)
     if time_format ~= 12 and time_format ~= 24 then
         print("INVALID_TIME_FORMAT: Time format must be either 12 or 24.")
-        return settings.time_format
+        return default_time_format
     end
 
     return time_format
