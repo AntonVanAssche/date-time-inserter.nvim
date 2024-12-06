@@ -7,6 +7,7 @@ local default_time_format = 12
 local settings = {
   date_format = default_date_format, -- DDMMYYYY, MMDDYYYY, YYYYMMDD or whatever you want.
   date_separator = "/", -- Character used to separate the date parts.
+  date_time_separator = " at ", -- String used to separate the date and time.
 
   time_format = default_time_format, -- Can be 24 or 12 for 24 hour or 12 hour time.
   show_seconds = false, -- Whether to show seconds in the time (true) or not (false)
@@ -238,7 +239,7 @@ M.insert_date_time = function()
   local time_format = convert_time_to_config_format(time)
 
   -- Insert the date and time at the cursor position.
-  vim.api.nvim_put({ date_format .. " at " .. time_format }, "c", true, true)
+  vim.api.nvim_put({ date_format .. settings.date_time_separator .. time_format }, "c", true, true)
 end
 
 return M
