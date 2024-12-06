@@ -36,6 +36,7 @@ InsertDateTime                                                 *:InsertDateTime*
     require("date-time-inserter").setup {
         date_format = 'MMDDYYYY',
         date_separator = '/',
+        date_time_separator = ' at ',
         time_format = 12,
         show_seconds = false,
         insert_date_map = '<leader>dt',
@@ -62,6 +63,12 @@ InsertDateTime                                                 *:InsertDateTime*
     date.
 
     For example, a '-' will result in 12-31-2022.
+
+`date_time_separator`:
+    The string to use as a separator between the different parts of the
+    date and time.
+
+    For example, ' at ' will result in 12-31-2022 at 11:59 AM.
 
 `show_seconds`:
     Whether to include seconds in the time. Set to true to show seconds or

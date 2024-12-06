@@ -75,6 +75,7 @@ end
 date_time_inserter.setup {
     date_format = 'MMDDYYYY',
     date_separator = '/',
+    date_time_separator = ' at ',
     time_format = 12,
     show_seconds = false,
     insert_date_map = '<leader>dt',
@@ -85,20 +86,22 @@ date_time_inserter.setup {
 
 You can customize the following settings:
 
--   `date_format`: The format of the date. You can use the letters 'Y', 'M', and 'D' to represent the year, month, and day, respectively. The order of the letters determines the order of the date.
-    -   For example, 'MMDDYYYY' will result in a date in the format '12/31/2022'.
--   `time_format`: The format of the time. Set to 12 for 12 hour time or 24 for 24 hour time.
-    -   For example, '12' will result in 1:00 PM instead of 13:00.
--   `date_separator`: The character to use as a separator between the different parts of the date.
-    -   For example, a '-' will result in 12-31-2022.
--   `show_seconds`: Whether to include seconds in the time. Set to true to show seconds or false to hide them.
-    -   For example, 'true' will result in 11:59:41 AM instead of 11:59 AM.
--   `insert_date_map`: The keymap (in normal mode) used to insert the date.
-    -   For example, when the key combination '<leader>dt' is pressed, the date will be inserted.
--   `insert_time_map`: The keymap (in normal mode) used to insert the time.
-    -   For example, when the key combination '<leader>tt' is pressed, the time will be inserted.
--   `insert_date_time_map`: The keymap (in normal mode) used to insert the date and time.
-    -   For example, when the key combination '<leader>dtt' is pressed, the date and time will be inserted.
+- `date_format`: The format of the date. You can use the letters 'Y', 'M', and 'D' to represent the year, month, and day, respectively. The order of the letters determines the order of the date.
+  - For example, 'MMDDYYYY' will result in a date in the format '12/31/2022'.
+- `time_format`: The format of the time. Set to 12 for 12 hour time or 24 for 24 hour time.
+  - For example, '12' will result in 1:00 PM instead of 13:00.
+- `date_separator`: The character to use as a separator between the different parts of the date.
+  - For example, a '-' will result in 12-31-2022.
+- `date_time_separator`: The string to use as a separator between the different parts of the date and time.
+  - For example, ' at ' will result in 12-31-2022 at 11:59 AM.
+- `show_seconds`: Whether to include seconds in the time. Set to true to show seconds or false to hide them.
+  - For example, 'true' will result in 11:59:41 AM instead of 11:59 AM.
+- `insert_date_map`: The keymap (in normal mode) used to insert the date.
+  - For example, when the key combination '<leader>dt' is pressed, the date will be inserted.
+- `insert_time_map`: The keymap (in normal mode) used to insert the time.
+  - For example, when the key combination '<leader>tt' is pressed, the time will be inserted.
+- `insert_date_time_map`: The keymap (in normal mode) used to insert the date and time.
+  - For example, when the key combination '<leader>dtt' is pressed, the date and time will be inserted.
 
 If you do not configure Date Time Inserter or leave certain settings unconfigured, it will use its default settings for those settings.
 
