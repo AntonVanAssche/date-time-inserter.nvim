@@ -24,9 +24,12 @@ local _convert_date_to_config_format = function(date_format, date_separator, dat
     end
   end
 
-  -- Remove the last separator.
+  -- Remove trailing date separator if it exists.
   -- e.g. 12/31/2022/ -> 12/31/2022
-  _date = _date:sub(1, -2)
+  -- e.g. 12312022    -> 12312022
+  if _date:sub(-1) == date_separator then
+    _date = _date:sub(1, -2)
+  end
 
   return _date
 end
