@@ -78,9 +78,6 @@ date_time_inserter.setup {
     date_time_separator = ' at ',
     time_format = 12,
     show_seconds = false,
-    insert_date_map = '<leader>dt',
-    insert_time_map = '<leader>tt',
-    insert_date_time_map = '<leader>dtt',
 }
 ```
 
@@ -96,33 +93,25 @@ You can customize the following settings:
   - For example, ' at ' will result in 12-31-2022 at 11:59 AM.
 - `show_seconds`: Whether to include seconds in the time. Set to true to show seconds or false to hide them.
   - For example, 'true' will result in 11:59:41 AM instead of 11:59 AM.
-- `insert_date_map`: The keymap (in normal mode) used to insert the date.
-  - For example, when the key combination '<leader>dt' is pressed, the date will be inserted.
-- `insert_time_map`: The keymap (in normal mode) used to insert the time.
-  - For example, when the key combination '<leader>tt' is pressed, the time will be inserted.
-- `insert_date_time_map`: The keymap (in normal mode) used to insert the date and time.
-  - For example, when the key combination '<leader>dtt' is pressed, the date and time will be inserted.
 
 If you do not configure Date Time Inserter or leave certain settings unconfigured, it will use its default settings for those settings.
 
 ## Usage
 
-### Using keybindings
+### commands
 
-To use Date Time Inserter, you simply need to press the key combination you specified in the configuration file.
-For example, if you set insert_date_map to '<leader>dt', pressing <leader>dt in normal mode will insert the current date into the buffer.
-Similarly, pressing the key combination you specified for insert_time_map or insert_date_time_map will insert the current time or both the date and time, respectively.
+The plugin provides the following commands, which can be called in normal mode:
 
-### Using commands
+- `:InsertDate`: Inserts the current date into the buffer.
+- `:InsertTime`: Inserts the current time into the buffer.
+- `:InsertDateTime`: Inserts the current date and time into the buffer.
 
-You can also use the commands like ':InsertDate', ':InsertTime', and ':InsertDateTime' to call the plugin (in normal mode).
+However, it's recommended to use the keybindings instead of the commands.
 
-For example:
-
-```
-:InsertDate
-:InsertTime
-:InsertDateTime
+```lua
+vim.keymap.set("n", "<leader>dt", ":InsertDate<CR>", {noremap = true, silent = true})
+vim.keymap.set("n", "<leader>tt", ":InsertTime<CR>", {noremap = true, silent = true})
+vim.keymap.set("n", "<leader>dtt", ":InsertDateTime<CR>", {noremap = true, silent = true})
 ```
 
 ## License
