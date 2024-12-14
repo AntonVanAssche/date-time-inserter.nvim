@@ -12,7 +12,7 @@ local _convert_time_to_config_format = function(time_format, show_seconds, time)
   local second = tonumber(string.sub(time, 7, 8))
 
   if time_format == 12 then
-    suffix = hour > 12 and "PM" or "AM"
+    suffix = hour >= 12 and "PM" or "AM"
     hour = hour % 12
     if hour == 0 then
       hour = 12
