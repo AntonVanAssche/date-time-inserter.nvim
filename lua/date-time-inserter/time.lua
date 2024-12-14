@@ -19,10 +19,15 @@ local _convert_time_to_config_format = function(time_format, show_seconds, time)
     end
   end
 
+  local suffix_str = ""
+  if suffix ~= "" then
+    suffix_str = " " .. suffix
+  end
+
   if show_seconds then
-    _time = string.format("%d:%d:%d %s", hour, minute, second, suffix)
+    _time = string.format("%d:%d:%d%s", hour, minute, second, suffix_str)
   else
-    _time = string.format("%d:%d %s", hour, minute, suffix)
+    _time = string.format("%d:%d%s", hour, minute, suffix_str)
   end
 
   return _time
