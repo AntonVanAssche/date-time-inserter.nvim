@@ -11,8 +11,8 @@ describe("Setup Tests", function()
 
   it("should work with opts", function()
     plugin.setup({
-      width = 60,
-      height = 10,
+      time_format = 12,
+      show_seconds = true,
     })
   end)
 end)
