@@ -25,9 +25,9 @@ local _convert_time_to_config_format = function(time_format, show_seconds, time)
   end
 
   if show_seconds then
-    _time = string.format("%d:%d:%d%s", hour, minute, second, suffix_str)
+    _time = string.format("%02d:%02d:%02d%s", hour, minute, second, suffix_str)
   else
-    _time = string.format("%d:%d%s", hour, minute, suffix_str)
+    _time = string.format("%02d:%02d%s", hour, minute, suffix_str)
   end
 
   return _time
