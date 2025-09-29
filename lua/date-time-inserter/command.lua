@@ -3,23 +3,29 @@ local cmds = {
   {
     name = "InsertDate",
     desc = "Insert the current date.",
-    func = "require('date-time-inserter').insert_date()",
+    func = function(opts)
+      require("date-time-inserter").insert_date(opts.fargs[1])
+    end,
     opts = {
-      nargs = 0,
+      nargs = "*",
     },
   },
   {
     name = "InsertTime",
     desc = "Insert the current time.",
-    func = "require('date-time-inserter').insert_time()",
+    func = function(opts)
+      require("date-time-inserter").insert_time(opts.fargs[1])
+    end,
     opts = {
-      nargs = 0,
+      nargs = "*",
     },
   },
   {
     name = "InsertDateTime",
     desc = "Insert the current date and time.",
-    func = "require('date-time-inserter').insert_date_time()",
+    func = function()
+      require("date-time-inserter").insert_date_time()
+    end,
     opts = {
       nargs = 0,
     },
@@ -27,7 +33,7 @@ local cmds = {
 }
 
 local _create_command = function(name, func, opts)
-  vim.api.nvim_create_user_command(name, "lua " .. func, opts)
+  vim.api.nvim_create_user_command(name, func, opts)
 end
 
 -- Should only be called from plugin directory.

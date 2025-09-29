@@ -1,110 +1,124 @@
 -- tests/date-time-inserter/config_spec.lua
 
-local M = require("date-time-inserter.config")
+local config = require("date-time-inserter.config")
 local assert = require("luassert")
 
-local function capture_print(func)
-  local output = ""
-  local original_print = print
-  print = function(str)
-    output = output .. str .. "\n"
-  end
-  func()
-  print = original_print
-  return output
+-- mock vim.api for feedback
+vim = vim or {}
+vim.api = vim.api or {}
+vim.api.nvim_err_writeln = function(msg)
+  _G.last_error = msg
+end
+vim.api.nvim_echo = function(msgs, _, _)
+  _G.last_echo = msgs[1][1]
 end
 
 describe("Configuration Tests", function()
+  before_each(function()
+    -- reset globals
+    _G.last_error = nil
+    _G.last_echo = nil
+    config.config = {
+      date_format = "%d-%m-%Y",
+      time_format = "%H:%M",
+      date_time_separator = " at ",
+      show_seconds = false,
+    }
+  end)
+
   describe("Valid Configurations", function()
-    it("should correctly set a valid date format (DDMMYYYY)", function()
-      M.setup({
-        date_format = "DDMMYYYY",
-        time_format = 12,
+    it("accepts a valid strftime date format", function()
+      config.setup({
+        date_format = "%Y/%m/%d",
       })
-      assert.are.same(M.config.date_format, "DDMMYYYY")
+      assert.are.same("%Y/%m/%d", config.config.date_format)
     end)
 
-    it("should correctly set a valid time format (24-hour)", function()
-      M.setup({
-        date_format = "MMDDYYYY",
-        time_format = 24,
+    it("accepts a valid strftime time format", function()
+      config.setup({
+        time_format = "%I:%M %p",
       })
-      assert.are.same(M.config.time_format, 24)
+      assert.are.same("%I:%M %p", config.config.time_format)
     end)
 
-    it("should set a custom date separator (dash)", function()
-      M.setup({
-        date_separator = "-",
-      })
-      assert.are.same(M.config.date_separator, "-")
-    end)
-
-    it("should set a custom date time separator (<space>dash<space>)", function()
-      M.setup({
+    it("sets a custom date time separator", function()
+      config.setup({
         date_time_separator = " - ",
       })
-      assert.are.same(M.config.date_time_separator, " - ")
+      assert.are.same(" - ", config.config.date_time_separator)
     end)
   end)
 
-  describe("Invalid Configurations", function()
-    it("should fall back to default date format for invalid length (MMDDYY)", function()
-      M.setup({
-        date_format = "MMDDYY",
+  describe("Deprecated Configurations", function()
+    it("converts legacy date format MMDDYYYY to strftime with dashes", function()
+      config.setup({
+        date_format = "MMDDYYYY",
       })
-      assert.are.same(M.config.date_format, "MMDDYYYY")
+      assert.are.same("%m-%d-%Y", config.config.date_format)
+      assert.is_not_nil(_G.last_echo)
+      assert.truthy(_G.last_echo:find("deprecated"))
     end)
 
-    it("should fall back to default date format for missing components (MMDDMM)", function()
-      M.setup({
-        date_format = "MMDDMM",
+    it("converts legacy date format DDMMYYYY to strftime with dashes", function()
+      config.setup({
+        date_format = "DDMMYYYY",
       })
-      assert.are.same(M.config.date_format, "MMDDYYYY")
+      assert.are.same("%d-%m-%Y", config.config.date_format)
+      assert.is_not_nil(_G.last_echo)
+      assert.truthy(_G.last_echo:find("deprecated"))
     end)
 
-    it("should fall back to default time format for invalid time format (10)", function()
-      M.setup({
-        time_format = 10,
+    it("converts legacy 12-hour time format", function()
+      config.setup({
+        time_format = 12,
       })
-      assert.are.same(M.config.time_format, 12)
+      assert.are.same("%I:%M %p", config.config.time_format)
+      assert.is_not_nil(_G.last_echo)
+      assert.truthy(_G.last_echo:find("deprecated"))
     end)
 
-    it("should print an error for invalid date format length (MMDDYY)", function()
-      local result = capture_print(function()
-        M.setup({
-          date_format = "MMDDYY",
-        })
-      end)
-      assert.equal(1, result:find("INVALID_DATE_FORMAT"))
+    it("converts legacy 24-hour time format", function()
+      config.setup({
+        time_format = 24,
+      })
+      assert.are.same("%H:%M", config.config.time_format)
+      assert.is_not_nil(_G.last_echo)
+      assert.truthy(_G.last_echo:find("deprecated"))
     end)
 
-    it("should print an error for invalid time format (10)", function()
-      local result = capture_print(function()
-        M.setup({
-          time_format = 10,
-        })
-      end)
-      assert.equal(1, result:find("INVALID_TIME_FORMAT"))
+    it("adds seconds to time format when show_seconds is true", function()
+      config.setup({
+        time_format = "%H:%M",
+        show_seconds = true,
+      })
+      assert.are.same("%H:%M:%S", config.config.time_format)
+      assert.is_not_nil(_G.last_echo)
+      assert.truthy(_G.last_echo:find("deprecated"))
+    end)
+
+    it("does not add seconds when show_seconds is false", function()
+      config.setup({
+        time_format = "%H:%M",
+        show_seconds = false,
+      })
+      assert.are.same("%H:%M", config.config.time_format)
     end)
   end)
 
-  describe("Edge Case Handling", function()
-    it("should handle invalid date format (missing 'DD')", function()
-      local result = capture_print(function()
-        M.setup({
-          date_format = "MMYY",
-        })
-      end)
-      assert.are.equal(1, result:find("INVALID_DATE_FORMAT"))
+  describe("Fallback Handling", function()
+    it("falls back to default date format when nil", function()
+      config.setup({
+        date_format = nil,
+      })
+
+      assert.are.same("%d-%m-%Y", config.config.date_format)
     end)
 
-    it("should handle invalid date format (contains extra 'M')", function()
-      local result = capture_print(function()
-        M.setup({
-          date_format = "MMMDDYYYY",
-        })
-      end)
-      assert.equal(1, result:find("INVALID_DATE_FORMAT"))
+    it("falls back to default time format when nil", function()
+      config.setup({
+        time_format = nil,
+      })
+      assert.are.same("%H:%M", config.config.time_format)
     end)
   end)
 end)

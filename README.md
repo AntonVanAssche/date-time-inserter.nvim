@@ -66,25 +66,20 @@ if not date_time_inserter_status_ok then
 end
 
 date_time_inserter.setup {
-    date_format = 'MMDDYYYY',
-    date_separator = '/',
+    date_format = '%d-%m-%Y',
+    time_format = '%H:%M',
     date_time_separator = ' at ',
-    time_format = 12,
-    show_seconds = false,
 }
 ```
 
 You can customize the following settings:
 
-- **`date_format`**: Defines the date structure using `Y`, `M`, and `D` for
-  year, month, and day (e.g., `MMDDYYYY` → `12/31/2022`).
-- **`time_format`**: Use `12` for 12-hour or `24` for 24-hour time (e.g., `12`
-  → `1:00 PM`).
-- **`date_separator`**: Character separating date parts (e.g., `-` →
-  `12-31-2022`).
+- **`date_format`**: Defines the date structure using `strftime` format codes
+  for year, month, day (e.g., `%d/%m/%Y` → `12/31/2022`).
+- **`time_format`**: Defines the time structure using `strftime` format codes
+  for hour, minute, and second (e.g., `%I:%M %p` → `11:59 AM`).
 - **`date_time_separator`**: String separating date and time (e.g., ` at ` →
   `12-31-2022 at 11:59 AM`).
-- **`show_seconds`**: Set `true` to include seconds (e.g., `true` → `11:59:41 AM`).
 
 If you do not configure DateTimeInserter or leave certain settings
 unconfigured, it will use its default settings for those settings.
