@@ -1,30 +1,25 @@
 # DateTimeInserter
 
-DateTimeInserter is a simple/basic Neovim plugin that allows you to easily
-insert the current date and time into your Neovim buffer.
+DateTimeInserter is a simple Neovim plugin that allows you to easily insert the
+current date and/or time into your buffer.
 
 ![preview](./assets/preview.gif)
 
-## Why?
+## Why use DateTimeInserter?
 
-This plugin does basically the same as the code block below, but this requires
-the `date` command to be installed on the system. Therefore it's not always
-possible to use it on every system, this is exactly what DateTimeInserter
-tries to solve by using the lua built-in `os.date()` function. The plugin
-allows you to insert the date and time into your Neovim buffer on every system
+Unlike shell-based solutions that require the `date` command (which might not be
+available on all systems), DateTimeInserter uses Lua's built-in `os.date()`
+function. This ensures that inserting the date and time works on any system,
 regardless of the operating system.
 
 ```lua
-vim.keymap.set("n", "<leader>dt", ':r! date "+\\%d-\\%m-\\%Y" <CR>', {noremap = true, vim.keymap.set})
-vim.keymap.set("n", "<leader>tt", ':r! date "+\\%H:\\%M:\\%S" <CR>', {noremap = true, vim.keymap.set})
-```
+vim.keymap.set("n", "<leader>dt", ':r! date "+\\%d-\\%m-\\%Y" <CR>', {noremap = true})
+vim.keymap.set("n", "<leader>tt", ':r! date "+\\%H:\\%M:\\%S" <CR>', {noremap = true})
+````
 
 ## Installation
 
-The example below describes how to install the plugin using
-[lazy.nvim](https://github.com/folke/lazy.nvim), but you can also use other
-plugin managers to install the plugin. Refer to the documentation of your
-plugin manager for more information.
+### Using `lazy.nvim`
 
 ```lua
 {
@@ -37,75 +32,110 @@ plugin manager for more information.
 }
 ```
 
+Other plugin managers are also supported, refer to their documentation for
+installation instructions.
+
 ## Configuration
 
-You can configure the plugin by adding the following to your init.lua:
+You can configure DateTimeInserter in either `init.lua` or `init.vim`, although
+`init.lua` is recommended for better readability and performance.
 
-### Configuring DateTimeInserter in init.vim
-
-While the examples below are in lua, you can adapt them for `.vim` files by
-wrapping them in a lua heredoc. However, it's not recommended due to
-significant slowdowns in Neovim's load time.
+### init.vim example
 
 ```vim
 lua << END
-    require('date-time-inserter').setup()
+  require('date-time-inserter').setup()
 END
 ```
 
-### Configuring DateTimeInserter in init.lua
-
-Configure the plugin in your `init.lua` file, as demonstrated in the example
-below. The default configuration is shown, and you can customize it by
-modifying the values of different settings.
+### init.lua example
 
 ```lua
-local date_time_inserter_status_ok, date_time_inserter = pcall(require, "date-time-inserter")
-if not date_time_inserter_status_ok then
-    return
-end
-
-date_time_inserter.setup {
+require("date-time-inserter").setup({
     date_format = '%d-%m-%Y',
     time_format = '%H:%M',
     date_time_separator = ' at ',
-}
+})
 ```
 
-You can customize the following settings:
+#### Configuration options
 
-- **`date_format`**: Defines the date structure using `strftime` format codes
-  for year, month, day (e.g., `%d/%m/%Y` → `12/31/2022`).
-- **`time_format`**: Defines the time structure using `strftime` format codes
-  for hour, minute, and second (e.g., `%I:%M %p` → `11:59 AM`).
-- **`date_time_separator`**: String separating date and time (e.g., ` at ` →
-  `12-31-2022 at 11:59 AM`).
+- `date_format`: Date structure using `strftime` format codes (e.g., `%d/%m/%Y`
+  → `31/12/2022`).
+- `time_format`: Time structure using `strftime` format codes (e.g., `%I:%M %p`
+  → `11:59 AM`).
+- `date_time_separator`: String that separates date and time (e.g., `' at '` →
+  `31-12-2022 at 11:59 AM`).
 
-If you do not configure DateTimeInserter or leave certain settings
-unconfigured, it will use its default settings for those settings.
+If not configured, defaults are used.
 
-## Usage
+## Commands
 
-The plugin provides the following commands, which can be called in normal mode:
+The plugin provides the following commands in normal mode:
 
-- `:InsertDate`: Inserts the current date into the buffer.
-- `:InsertTime`: Inserts the current time into the buffer.
-- `:InsertDateTime`: Inserts the current date and time into the buffer.
+- **`:InsertDate [FORMAT] [OFFSET]`**: Inserts the current date.
+  - `FORMAT`: strftime-style date format (default if omitted).
+  - `OFFSET`: Relative date, e.g., `+3d` (3 days from today), `-1w` (1 week ago),
+    `+1y-2m` (1 year forward, 2 months back).
+    - Supported units: `d` (days), `w` (weeks), `m` (months), `y` (years).
 
-However, it's recommended to use the keybindings instead of the commands.
+- **`:InsertTime [FORMAT] [OFFSET]`**: Inserts the current time.
+  - `FORMAT`: strftime-style time format (default if omitted).
+  - `OFFSET`: Relative time, e.g., `+2H` (2 hours from now), `-30M` (30 minutes
+    ago), `+1H15M` (1 hour 15 minutes from now).
+    - Supported units: `H` (hours), `M` (minutes), `S` (seconds).
+- **`:InsertDateTime`**: Inserts the current date and time using the configured
+  formats and separator.
+
+## Recommended Key Mappings
 
 ```lua
-vim.keymap.set("n", "<leader>dt", ":InsertDate<CR>", {noremap = true, silent = true})
-vim.keymap.set("n", "<leader>tt", ":InsertTime<CR>", {noremap = true, silent = true})
-vim.keymap.set("n", "<leader>dtt", ":InsertDateTime<CR>", {noremap = true, silent = true})
+vim.keymap.set(
+  "n",
+  "<leader>dt",
+  "<cmd>InsertDate<CR>",
+  {noremap = true, silent = true}
+)
+
+vim.keymap.set(
+  "n",
+  "<leader>tt",
+  "<cmd>InsertTime<CR>",
+  {noremap = true, silent = true}
+)
+
+vim.keymap.set(
+  "n",
+  "<leader>dtt",
+  "<cmd>InsertDateTime<CR>",
+  {noremap = true, silent = true}
+)
 ```
+
+## Deprecations
+
+The following old formats are deprecated:
+
+**Date formats:**
+
+- `MMDDYYYY` replaced with `%m-%d-%Y`
+- `DDMMYYYY` replaced with `%d-%m-%Y`
+- `YYYYMMDD` replaced with `%Y-%m-%d`
+- `YYYYDDMM` replaced with `%Y-%d-%m`
+
+**Time formats:**
+
+- `12` replaced with `%I:%M %p`
+- `24` replaced with `%H:%M`
+- `show_seconds` append `:%S` to the time format instead
+
+Deprecated formats are automatically converted to `strftime` equivalents with a
+warning.
 
 ## License
 
-DateTimeInserter is licensed under the MIT License. See the
-[LICENSE.md](./LICENSE.md) file for more information.
+MIT License. See [LICENSE.md](./LICENSE.md) for details.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a pull request or open an
-issue for any bugs or feature requests.
+Contributions are welcome! Open a pull request or an issue for bugs or feature requests.
