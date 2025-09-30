@@ -8,13 +8,13 @@ M.setup = function(opts)
   config.setup(opts)
 end
 
-M.insert_date = function(override_format)
-  local _date = date.setup(override_format)
+M.insert_date = function(override_format, offset)
+  local _date = date.setup(override_format, offset)
   vim.api.nvim_put({ _date }, "c", true, true)
 end
 
-M.insert_time = function(override_format)
-  local _time = time.setup(override_format)
+M.insert_time = function(override_format, offset)
+  local _time = time.setup(override_format, offset)
   vim.api.nvim_put({ _time }, "c", true, true)
 end
 

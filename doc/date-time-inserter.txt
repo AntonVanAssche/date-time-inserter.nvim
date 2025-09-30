@@ -16,13 +16,49 @@ CONTENTS                                                  *DateTimeInserter-TOC*
 ===============================================================================
 1. Commands                                            *DateTimeInserterCommands*
 
-InsertDate [FORMAT]                                                *:InsertDate*
+InsertDate [FORMAT] [OFFSET]                                       *:InsertDate*
 
   Inserts the current date into the buffer.
 
-InsertTime [FORMAT]                                                *:InsertTime*
+  Optional arguments:
+
+    FORMAT  - `strftime`-style date format (e.g., `%d-%m-%Y`).
+              If omitted, the default configured format is used.
+
+    OFFSET  - relative date calculation. Use a leading `+` or `-` followed by
+              a number and a unit. Multiple units can be combined.
+              Supported units:
+                d  - days
+                w  - weeks
+                m  - months
+                y  - years
+
+              Examples:
+                `:InsertDate +3d`      = 3 days from today
+                `:InsertDate -1w`      = 1 week ago
+                `:InsertDate +1y-2m`   = 1 year forward, 2 months back
+
+
+InsertTime [FORMAT] [OFFSET]                                       *:InsertTime*
 
   Inserts the current time into the buffer.
+
+  Optional arguments:
+
+    FORMAT  - `strftime`-style time format (e.g., `%H:%M:%S`).
+              If omitted, the default configured format is used.
+
+    OFFSET  - relative time calculation. Use a leading `+` or `-` followed by
+              a number and a unit. Multiple units can be combined.
+              Supported units:
+                H  - hours
+                M  - minutes
+                S  - seconds
+
+              Examples:
+                `:InsertTime +2H`     = 2 hours from now
+                `:InsertTime -30M`    = 30 minutes ago
+                `:InsertTime +1H15M`  = 1 hour and 15 minutes from now
 
 InsertDateTime                                                 *:InsertDateTime*
 

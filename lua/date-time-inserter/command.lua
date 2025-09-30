@@ -4,7 +4,18 @@ local cmds = {
     name = "InsertDate",
     desc = "Insert the current date.",
     func = function(opts)
-      require("date-time-inserter").insert_date(opts.fargs[1])
+      local format_arg, offset
+
+      if #opts.fargs == 0 then
+        format_arg, offset = nil, nil
+      elseif opts.fargs[1]:match("^[+-]") then
+        format_arg, offset = nil, opts.fargs[1]
+      else
+        format_arg = opts.fargs[1]
+        offset = opts.fargs[2]
+      end
+
+      require("date-time-inserter").insert_date(format_arg, offset)
     end,
     opts = {
       nargs = "*",
@@ -14,7 +25,35 @@ local cmds = {
     name = "InsertTime",
     desc = "Insert the current time.",
     func = function(opts)
-      require("date-time-inserter").insert_time(opts.fargs[1])
+      local format_arg, offset
+
+      if #opts.fargs == 0 then
+        format_arg, offset = nil, nil
+      else
+        local fargs = opts.fargs
+        local split_index = nil
+
+        for i, arg in ipairs(fargs) do
+          if arg:match("^[+-]") then
+            split_index = i
+            break
+          end
+        end
+
+        if split_index then
+          if split_index > 1 then
+            format_arg = table.concat(vim.list_slice(fargs, 1, split_index - 1), " ")
+          else
+            format_arg = nil
+          end
+          offset = table.concat(vim.list_slice(fargs, split_index), " ")
+        else
+          format_arg = table.concat(fargs, " ")
+          offset = nil
+        end
+      end
+
+      require("date-time-inserter").insert_time(format_arg, offset)
     end,
     opts = {
       nargs = "*",
