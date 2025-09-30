@@ -8,12 +8,11 @@ Author: Anton Van Assche <https://github.com/AntonVanAssche/>
 ===============================================================================
 CONTENTS                                                  *DateTimeInserter-TOC*
 
-  1. Commands.............|date-time-inserter-commands|
-  2. Configuration........|date-time-inserter-configuration|
-  3. Mapping..............|date-time-inserter-mapping
+  1. Commands.............|DateTimeInserterCommands|
+  2. Configuration........|DateTimeInserterConfiguration|
+  3. Mapping..............|DateTimeInserterMapping|
 
 ===============================================================================
-
 1. Commands                                            *DateTimeInserterCommands*
 
 InsertDate                                                         *:InsertDate*
