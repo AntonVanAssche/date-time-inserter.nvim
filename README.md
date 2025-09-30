@@ -1,6 +1,6 @@
-# Date Time Inserter
+# DateTimeInserter
 
-Date Time Inserter is a simple/basic Neovim plugin that allows you to easily
+DateTimeInserter is a simple/basic Neovim plugin that allows you to easily
 insert the current date and time into your Neovim buffer.
 
 ![preview](./assets/preview.gif)
@@ -9,7 +9,7 @@ insert the current date and time into your Neovim buffer.
 
 This plugin does basically the same as the code block below, but this requires
 the `date` command to be installed on the system. Therefore it's not always
-possible to use it on every system, this is exactly what Date Time Inserter
+possible to use it on every system, this is exactly what DateTimeInserter
 tries to solve by using the lua built-in `os.date()` function. The plugin
 allows you to insert the date and time into your Neovim buffer on every system
 regardless of the operating system.
@@ -41,7 +41,7 @@ plugin manager for more information.
 
 You can configure the plugin by adding the following to your init.lua:
 
-### Configuring Date Time Inserter in init.vim
+### Configuring DateTimeInserter in init.vim
 
 While the examples below are in lua, you can adapt them for `.vim` files by
 wrapping them in a lua heredoc. However, it's not recommended due to
@@ -53,7 +53,7 @@ lua << END
 END
 ```
 
-### Configuring Date Time Inserter in init.lua
+### Configuring DateTimeInserter in init.lua
 
 Configure the plugin in your `init.lua` file, as demonstrated in the example
 below. The default configuration is shown, and you can customize it by
@@ -86,7 +86,7 @@ You can customize the following settings:
   `12-31-2022 at 11:59 AM`).
 - **`show_seconds`**: Set `true` to include seconds (e.g., `true` → `11:59:41 AM`).
 
-If you do not configure Date Time Inserter or leave certain settings
+If you do not configure DateTimeInserter or leave certain settings
 unconfigured, it will use its default settings for those settings.
 
 ## Usage
@@ -107,7 +107,7 @@ vim.keymap.set("n", "<leader>dtt", ":InsertDateTime<CR>", {noremap = true, silen
 
 ## License
 
-Date Time Inserter is licensed under the MIT License. See the
+DateTimeInserter is licensed under the MIT License. See the
 [LICENSE.md](./LICENSE.md) file for more information.
 
 ## Contributing
