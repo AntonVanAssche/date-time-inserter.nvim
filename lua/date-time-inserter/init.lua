@@ -34,22 +34,34 @@ local function parse_args(fargs)
   return format_arg, offset
 end
 
+M.format_date = function(fmt, offset)
+  return date.setup(fmt, offset)
+end
+
+M.format_time = function(fmt, offset)
+  return time.setup(fmt, offset)
+end
+
+M.format_date_time = function(date_fmt, date_offset, time_fmt, time_offset)
+  local d = date.setup(date_fmt, date_offset)
+  local t = time.setup(time_fmt, time_offset)
+  return d .. config.config.date_time_separator .. t
+end
+
 M.insert_date = function(fargs)
   local fmt, offset = parse_args(fargs)
-  local _date = date.setup(fmt, offset)
-  vim.api.nvim_put({ _date }, "c", true, true)
+  local str = M.format_date(fmt, offset)
+  vim.api.nvim_put({ str }, "c", true, true)
 end
 
 M.insert_time = function(fargs)
   local fmt, offset = parse_args(fargs)
-  local _time = time.setup(fmt, offset)
-  vim.api.nvim_put({ _time }, "c", true, true)
+  local str = M.format_time(fmt, offset)
+  vim.api.nvim_put({ str }, "c", true, true)
 end
 
 M.insert_date_time = function()
-  local d = date.setup()
-  local t = time.setup()
-  local str = d .. config.config.date_time_separator .. t
+  local str = M.format_date_time()
   vim.api.nvim_put({ str }, "c", true, true)
 end
 

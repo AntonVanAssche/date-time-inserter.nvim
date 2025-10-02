@@ -12,6 +12,7 @@ CONTENTS                                                  *DateTimeInserter-TOC*
   2. Configuration........|DateTimeInserterConfiguration|
   3. Deprecations.........|DateTimeInserterDeprecations|
   4. Mapping..............|DateTimeInserterMapping|
+  5. API..................|DateTimeInserterAPI|
 
 ===============================================================================
 1. Commands                                            *DateTimeInserterCommands*
@@ -140,6 +141,53 @@ InsertDateTime                                                 *:InsertDateTime*
     {noremap = true, silent = true}
   )
 <
+
+===============================================================================
+5. API                                                      *DateTimeInserterAPI*
+
+  Besides user commands, DateTimeInserter also exposes a Lua API.
+  This can be useful for integration with snippet managers (like LuaSnip),
+  custom mappings, or other plugins that want to fetch a formatted date/time
+  string without inserting it directly into the buffer.
+
+>
+  local dti = require("date-time-inserter")
+
+  -- Format only the date
+  local d = dti.format_date("%Y-%m-%d")
+  print(d)  -- "2025-10-01"
+
+  -- Format only the time
+  local t = dti.format_time("%H:%M:%S")
+  print(t)  -- "13:37:42"
+
+  -- Format both date and time
+  local dt = dti.format_date_time("%d-%m-%Y", nil, "%H:%M", nil)
+  print(dt) -- "01-10-2025 at 13:37"
+<
+
+  Available API functions:
+
+  • `format_date(fmt, offset)` ~
+    Returns a formatted date string.
+      - `fmt`: an optional `strftime`-style format (defaults to
+        `config.date_format`).
+      - `offset`: an optional relative offset string (e.g., `+2d`, `-1w`).
+
+  • `format_time(fmt, offset)` ~
+    Returns a formatted time string.
+      - `fmt`: an optional `strftime`-style format (defaults to
+        `config.time_format`).
+      - `offset`: an optional relative offset string (e.g., `+2H`, `-30M`).
+
+  • `format_date_time(fmt_date, offset_date, fmt_time, offset_time)` ~
+    Returns a combined date and time string separated by
+    `config.date_time_separator`.
+      - `fmt_date` / `offset_date`: same as `format_date`.
+      - `fmt_time` / `offset_time`: same as `format_time`.
+
+  These functions do not modify the buffer. They are purely for obtaining
+  strings that can be inserted or manipulated however you like.
 
 ===============================================================================
 vim:tw=78:ts=2:sts=2:sw=2:ft=help:norl:
