@@ -1,42 +1,16 @@
 local M = {}
+local config = require("date-time-inserter.config")
+local utils = require("date-time-inserter.utils")
 
-local _get_date = function()
-  return os.date("%Y-%m-%d")
-end
+M.setup = function(override_format, offset)
+  local fmt = override_format or config.config.date_format
+  local base_time = os.time()
 
-local _convert_date_to_config_format = function(date_format, date_separator, date)
-  local _date = ""
-
-  local year = string.sub(date, 1, 4)
-  local month = string.sub(date, 6, 7)
-  local day = string.sub(date, 9, 10)
-  local date_table = {
-    ["Y"] = year,
-    ["M"] = month,
-    ["D"] = day,
-  }
-
-  local included = {}
-  for char in date_format:gmatch(".") do
-    if not included[char] then
-      _date = _date .. date_table[char] .. date_separator
-      included[char] = true
-    end
+  if type(offset) == "string" and offset:match("^[+-]") then
+    base_time = utils.apply_offset_date(base_time, offset)
   end
 
-  -- Remove trailing date separator if it exists.
-  -- e.g. 12/31/2022/ -> 12/31/2022
-  -- e.g. 12312022    -> 12312022
-  if _date:sub(-1) == date_separator then
-    _date = _date:sub(1, -2)
-  end
-
-  return _date
-end
-
-M.setup = function(date_format, date_separator)
-  local date = _convert_date_to_config_format(date_format, date_separator, _get_date())
-  return date
+  return os.date(fmt, base_time)
 end
 
 return M

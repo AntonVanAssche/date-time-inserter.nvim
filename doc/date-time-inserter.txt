@@ -10,18 +10,55 @@ CONTENTS                                                  *DateTimeInserter-TOC*
 
   1. Commands.............|DateTimeInserterCommands|
   2. Configuration........|DateTimeInserterConfiguration|
-  3. Mapping..............|DateTimeInserterMapping|
+  3. Deprecations.........|DateTimeInserterDeprecations|
+  4. Mapping..............|DateTimeInserterMapping|
 
 ===============================================================================
 1. Commands                                            *DateTimeInserterCommands*
 
-InsertDate                                                         *:InsertDate*
+InsertDate [FORMAT] [OFFSET]                                       *:InsertDate*
 
   Inserts the current date into the buffer.
 
-InsertTime                                                         *:InsertTime*
+  Optional arguments:
+
+    FORMAT  - `strftime`-style date format (e.g., `%d-%m-%Y`).
+              If omitted, the default configured format is used.
+
+    OFFSET  - relative date calculation. Use a leading `+` or `-` followed by
+              a number and a unit. Multiple units can be combined.
+              Supported units:
+                d  - days
+                w  - weeks
+                m  - months
+                y  - years
+
+              Examples:
+                `:InsertDate +3d`      = 3 days from today
+                `:InsertDate -1w`      = 1 week ago
+                `:InsertDate +1y-2m`   = 1 year forward, 2 months back
+
+
+InsertTime [FORMAT] [OFFSET]                                       *:InsertTime*
 
   Inserts the current time into the buffer.
+
+  Optional arguments:
+
+    FORMAT  - `strftime`-style time format (e.g., `%H:%M:%S`).
+              If omitted, the default configured format is used.
+
+    OFFSET  - relative time calculation. Use a leading `+` or `-` followed by
+              a number and a unit. Multiple units can be combined.
+              Supported units:
+                H  - hours
+                M  - minutes
+                S  - seconds
+
+              Examples:
+                `:InsertTime +2H`     = 2 hours from now
+                `:InsertTime -30M`    = 30 minutes ago
+                `:InsertTime +1H15M`  = 1 hour and 15 minutes from now
 
 InsertDateTime                                                 *:InsertDateTime*
 
@@ -36,33 +73,47 @@ InsertDateTime                                                 *:InsertDateTime*
 
 >
   require("date-time-inserter").setup {
-    date_format = 'MMDDYYYY',
-    date_separator = '/',
+    date_format = '%d-%m-%Y',
+    time_format = '%H:%M',
     date_time_separator = ' at ',
-    time_format = 12,
-    show_seconds = false,
-
   }
 <
 
   `date_format`:
-    Defines the date structure using `Y`, `M`, and `D` for year, month, and
-    day (e.g., `MMDDYYYY` → `12/31/2022`).
+    Defines the date structure using `strftime` format codes for year, month,
+    day (e.g., `%d/%m/%Y` -> `12/31/2022`).
 
   `time_format`:
-    Use `12` for 12-hour format and `24` for 24-hour time (e.g., `12` → `1:00 PM`)
-
-  `date_separator`:
-    Character separating date parts (e.g., `-` → `12-31-2022`).
+    Defines the time structure using `strftime` format codes for hour, minute,
+    and second (e.g., `%I:%M %p` -> `11:59 AM`).
 
   `date_time_separator`:
-    String separating date and time (e.g., ` at ` → `12-31-2022 at 11:59 AM`).
-
-  `show_seconds`:
-    Set `true` to include seconds (e.g., `true` → `11:59:41 AM`).
+    String separating date and time (e.g., ` at ` -> `12-31-2022 at 11:59 AM`).
 
 ===============================================================================
-3. Mapping                                             *DateTimeInserterMapping*
+3. Deprecations                                   *DateTimeInserterDeprecations*
+
+  The following options and formats are deprecated and may be removed in a
+  future release of DateTimeInserter:
+
+  1. Date formats:
+    - `MMDDYYYY` -> `%m-%d-%Y`
+    - `DDMMYYYY` -> `%d-%m-%Y`
+    - `YYYYMMDD` -> `%Y-%m-%d`
+    - `YYYYDDMM` -> `%Y-%d-%m`
+
+  2. Time formats:
+    - `12` -> `%I:%M %p`
+    - `24` -> `%H:%M`
+    - `show_seconds` -> append `:%S` to the time format instead
+
+  When using any of the deprecated formats, the plugin will automatically
+  convert to the corresponding strftime format and display a warning message.
+  It is recommended to update your configuration to use `strftime`-style
+  formats directly.
+
+===============================================================================
+4. Mapping                                             *DateTimeInserterMapping*
 
   This part of the documentation contains recommended mappings for the
   commands. You can use them as they are or modify them to your liking.

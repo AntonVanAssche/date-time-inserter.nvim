@@ -1,75 +1,94 @@
 local M = {}
+local feedback = require("date-time-inserter.ui.feedback")
 
-local default_date_format = "MMDDYYYY"
-local default_time_format = 12
+local default_date_format = "%d-%m-%Y"
+local default_time_format = "%H:%M"
 
 M.config = {
   date_format = default_date_format,
-  date_separator = "/",
-  date_time_separator = " at ",
   time_format = default_time_format,
-  show_seconds = false,
+  date_time_separator = " at ",
+  show_seconds = nil,
 }
 
-local _validate_date_format = function(date_format)
-  if string.len(date_format) ~= 8 then
-    print("INVALID_DATE_FORMAT: Date format must be 8 characters long (e.g. MMDDYYYY).")
-    return default_date_format
-  end
+local deprecated_date_formats = {
+  ["MMDDYYYY"] = "%m-%d-%Y",
+  ["DDMMYYYY"] = "%d-%m-%Y",
+  ["YYYYMMDD"] = "%Y-%m-%d",
+  ["YYYYDDMM"] = "%Y-%d-%m",
+}
 
-  if
-    not string.find(date_format, "M")
-    or not string.find(date_format, "D")
-    or not string.find(date_format, "Y")
-  then
-    print(
-      "INVALID_DATE_FORMAT: Date format must contain the characters M, D and Y (e.g. MMDDYYYY)."
+local deprecated_time_formats = {
+  [12] = "%I:%M %p",
+  [24] = "%H:%M",
+}
+
+local function validate_date_format(fmt)
+  local replacement = deprecated_date_formats[fmt]
+    or deprecated_date_formats[string.upper(tostring(fmt))]
+  if replacement then
+    feedback.warn(
+      string.format("Date format '%s' is deprecated, using '%s' instead.", fmt, replacement)
     )
+    return replacement
+  end
+
+  if not fmt or fmt == "" then
+    feedback.info(string.format("Using default date format '%s'.", default_date_format))
     return default_date_format
   end
 
-  if string.find(date_format, "DD") == nil then
-    print(
-      'INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the "DD" string (e.g. MMDDYYYY).'
-    )
-    return default_date_format
-  end
-
-  if string.find(date_format, "MM") == nil then
-    print(
-      'INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the "MM" string (e.g. MMDDYYYY).'
-    )
-    return default_date_format
-  end
-
-  if string.find(date_format, "YYYY") == nil then
-    print(
-      'INVALID_DATE_FORMAT: Date format must contain exactly one occurrence of the "YYYY" string (e.g. MMDDYYYY).'
-    )
-    return default_date_format
-  end
-
-  return date_format
+  return fmt
 end
 
-local _validate_time_format = function(time_format)
-  if time_format ~= 12 and time_format ~= 24 then
-    print("INVALID_TIME_FORMAT: Time format must be either 12 or 24.")
-    return default_time_format
+local function validate_time_format(fmt, show_seconds)
+  local replacement
+
+  if deprecated_time_formats[fmt] then
+    replacement = deprecated_time_formats[fmt]
+  elseif deprecated_time_formats[tonumber(fmt)] then
+    replacement = deprecated_time_formats[tonumber(fmt)]
   end
 
-  return time_format
+  if replacement then
+    feedback.warn(
+      string.format(
+        "Time format '%s' is deprecated, using '%s' instead.",
+        tostring(fmt),
+        replacement
+      )
+    )
+    fmt = replacement
+  end
+
+  if show_seconds ~= nil then
+    feedback.warn("'show_seconds' is deprecated, append ':%S' to time format instead.")
+    if show_seconds then
+      if not fmt:find("%%S") then
+        fmt = fmt .. ":%S"
+      end
+    end
+  end
+
+  if type(fmt) ~= "string" or fmt == "" then
+    feedback.info(string.format("Using default time format '%s'.", default_time_format))
+    fmt = default_time_format
+  end
+
+  return fmt
 end
 
 M.setup = function(opts)
   opts = opts or {}
 
   for k, v in pairs(opts) do
-    M.config[k] = v
+    if v ~= nil then
+      M.config[k] = v
+    end
   end
 
-  M.config.date_format = _validate_date_format(M.config.date_format)
-  M.config.time_format = _validate_time_format(M.config.time_format)
+  M.config.date_format = validate_date_format(M.config.date_format)
+  M.config.time_format = validate_time_format(M.config.time_format, M.config.show_seconds)
 end
 
 return M
