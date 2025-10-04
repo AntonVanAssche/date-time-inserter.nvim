@@ -112,6 +112,43 @@ vim.keymap.set(
 )
 ```
 
+## API
+
+Besides the commands, DateTimeInserter also exposes a Lua API. This is useful
+for snippet managers (like [LuaSnip](https://github.com/L3MON4D3/LuaSnip))
+custom mappings, or other plugins that need formatted date/time strings without
+inserting them directly.
+
+### Examples
+
+```lua
+local dti = require("date-time-inserter")
+
+-- Date only
+print(dti.format_date("%Y-%m-%d"))        -- "2025-10-01"
+
+-- Time only
+print(dti.format_time("%H:%M:%S"))        -- "13:37:42"
+
+-- Date + Time                            -- "01-10-2025 at 13:37"
+print(dti.format_date_time("%d-%m-%Y", nil, "%H:%M", nil))
+```
+
+### Functions
+
+- `format_date(fmt?, offset?)`: Returns a formatted date string.
+  - `fmt`: optional `strftime` format (defaults to `config.date_format`)
+  - `offset`: optional relative offset, e.g. `+2d`, `-1w`
+- `format_time(fmt?, offset?)`: Returns a formatted time string.
+  - `fmt`: optional `strftime` format (defaults to `config.time_format`)
+  - `offset`: optional relative offset, e.g. `+3H`, `-30M`
+- `format_date_time(date_fmt?, date_offset?, time_fmt?, time_offset?)`: Returns a
+  formatted date and time string.
+  - `date_fmt`: optional `strftime` date format (defaults to `config.date_format`)
+  - `date_offset`: optional relative date offset, e.g. `+2d`, `-1w`
+  - `time_fmt`: optional `strftime` time format (defaults to `config.time_format`)
+  - `time_offset`: optional relative time offset, e.g. `+3H`, `-30M`
+
 ## Deprecations
 
 The following old formats are deprecated:
