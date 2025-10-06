@@ -1,4 +1,36 @@
+local config = require("date-time-inserter.config")
+
 local M = {}
+
+M.parse_args = function(fargs)
+  if #fargs == 0 then
+    return nil, nil
+  end
+
+  local split_index
+  for i, arg in ipairs(fargs) do
+    if arg:match("^[+-]") then
+      split_index = i
+      break
+    end
+  end
+
+  local format_arg, offset
+  if split_index then
+    if split_index > 1 then
+      format_arg = table.concat(vim.list_slice(fargs, 1, split_index - 1), " ")
+    end
+    offset = table.concat(vim.list_slice(fargs, split_index), " ")
+  else
+    format_arg = table.concat(fargs, " ")
+  end
+
+  if format_arg and config.config.presets[format_arg] then
+    format_arg = config.config.presets[format_arg]
+  end
+
+  return format_arg, offset
+end
 
 M.apply_offset_time = function(base_time, offset_str)
   local seconds = 0

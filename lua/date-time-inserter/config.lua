@@ -9,6 +9,7 @@ M.config = {
   time_format = default_time_format,
   date_time_separator = " at ",
   show_seconds = nil,
+  presets = {},
 }
 
 local deprecated_date_formats = {
