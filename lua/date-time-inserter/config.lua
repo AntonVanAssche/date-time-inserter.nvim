@@ -80,12 +80,7 @@ end
 
 M.setup = function(opts)
   opts = opts or {}
-
-  for k, v in pairs(opts) do
-    if v ~= nil then
-      M.config[k] = v
-    end
-  end
+  M.config = vim.tbl_deep_extend("force", M.config, opts)
 
   M.config.date_format = validate_date_format(M.config.date_format)
   M.config.time_format = validate_time_format(M.config.time_format, M.config.show_seconds)
