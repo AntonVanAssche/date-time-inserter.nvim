@@ -55,6 +55,7 @@ require("date-time-inserter").setup({
     date_format = '%d-%m-%Y',
     time_format = '%H:%M',
     date_time_separator = ' at ',
+    presets = {},
 })
 ```
 
@@ -66,6 +67,8 @@ require("date-time-inserter").setup({
   → `11:59 AM`).
 - `date_time_separator`: String that separates date and time (e.g., `' at '` →
   `31-12-2022 at 11:59 AM`).
+- `presets`: Dictionary of user-defined named presets for date/time formats
+  (e.g., `{ iso = "%Y-%m-%dT%H:%M:%S" }`).
 
 If not configured, defaults are used.
 
@@ -74,13 +77,15 @@ If not configured, defaults are used.
 The plugin provides the following commands in normal mode:
 
 - **`:InsertDate [FORMAT] [OFFSET]`**: Inserts the current date.
-  - `FORMAT`: strftime-style date format (default if omitted).
+  - `FORMAT`: strftime-style date format (default if omitted), or a preset name
+    defined in the `presets` configuration.
   - `OFFSET`: Relative date, e.g., `+3d` (3 days from today), `-1w` (1 week ago),
     `+1y-2m` (1 year forward, 2 months back).
     - Supported units: `d` (days), `w` (weeks), `m` (months), `y` (years).
 
 - **`:InsertTime [FORMAT] [OFFSET]`**: Inserts the current time.
-  - `FORMAT`: strftime-style time format (default if omitted).
+  - `FORMAT`: strftime-style time format (default if omitted), or a preset name
+    defined in the `presets` configuration.
   - `OFFSET`: Relative time, e.g., `+2H` (2 hours from now), `-30M` (30 minutes
     ago), `+1H15M` (1 hour 15 minutes from now).
     - Supported units: `H` (hours), `M` (minutes), `S` (seconds).

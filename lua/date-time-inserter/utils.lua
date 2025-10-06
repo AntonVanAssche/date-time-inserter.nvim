@@ -1,3 +1,5 @@
+local config = require("date-time-inserter.config")
+
 local M = {}
 
 M.parse_args = function(fargs)
@@ -21,6 +23,10 @@ M.parse_args = function(fargs)
     offset = table.concat(vim.list_slice(fargs, split_index), " ")
   else
     format_arg = table.concat(fargs, " ")
+  end
+
+  if format_arg and config.config.presets[format_arg] then
+    format_arg = config.config.presets[format_arg]
   end
 
   return format_arg, offset

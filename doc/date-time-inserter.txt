@@ -23,7 +23,8 @@ InsertDate [FORMAT] [OFFSET]                                       *:InsertDate*
 
   Optional arguments:
 
-    FORMAT  - `strftime`-style date format (e.g., `%d-%m-%Y`).
+    FORMAT  - `strftime`-style date format (e.g., `%d-%m-%Y`), or a preset
+              name defined in the `presets` configuration.
               If omitted, the default configured format is used.
 
     OFFSET  - relative date calculation. Use a leading `+` or `-` followed by
@@ -46,7 +47,8 @@ InsertTime [FORMAT] [OFFSET]                                       *:InsertTime*
 
   Optional arguments:
 
-    FORMAT  - `strftime`-style time format (e.g., `%H:%M:%S`).
+    FORMAT  - `strftime`-style time format (e.g., `%H:%M:%S`), or a preset
+              name defined in the `presets` configuration.
               If omitted, the default configured format is used.
 
     OFFSET  - relative time calculation. Use a leading `+` or `-` followed by
@@ -77,6 +79,7 @@ InsertDateTime                                                 *:InsertDateTime*
     date_format = '%d-%m-%Y',
     time_format = '%H:%M',
     date_time_separator = ' at ',
+    presets = {},
   }
 <
 
@@ -90,6 +93,10 @@ InsertDateTime                                                 *:InsertDateTime*
 
   `date_time_separator`:
     String separating date and time (e.g., ` at ` -> `12-31-2022 at 11:59 AM`).
+
+  `presets`:
+    Dictionary of user-defined named presets for date/time formats
+    (e.g., `{ iso = "%Y-%m-%dT%H:%M:%S" }`).
 
 ===============================================================================
 3. Deprecations                                   *DateTimeInserterDeprecations*
