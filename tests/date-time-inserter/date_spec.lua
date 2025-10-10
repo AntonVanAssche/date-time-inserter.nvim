@@ -1,31 +1,30 @@
--- tests/date-time-inserter/date_spec.lua
-
-local date = require("date-time-inserter.date")
+local date = require("date-time-inserter.model.date")
+local config = require("date-time-inserter.model.config")
 local assert = require("luassert")
 
--- mock os.date to handle strftime formats
-local mock_date_map = {
-  ["%m/%d/%Y"] = "12/14/2024",
-  ["%d-%m-%Y"] = "14-12-2024",
-}
-
 os.date = function(fmt)
-  return mock_date_map[fmt] or "?"
+  if fmt == "%m/%d/%Y" then return "12/14/2024" end
+  if fmt == "%d-%m-%Y" then return "14-12-2024" end
+  return "?"
 end
 
 describe("Date Format Tests", function()
-  it("strftime format with separators works", function()
-    local result = date.setup("%m/%d/%Y")
+  before_each(function()
+    config.setup({})
+  end)
+
+  it("strftime format with slashes", function()
+    local result = date.get("%m/%d/%Y")
     assert.are.same("12/14/2024", result)
   end)
 
-  it("strftime format with dashes works", function()
-    local result = date.setup("%d-%m-%Y")
+  it("strftime format with dashes", function()
+    local result = date.get("%d-%m-%Y")
     assert.are.same("14-12-2024", result)
   end)
 
-  it("falls back to default when nil", function()
-    local result = date.setup(nil)
-    assert.are.same("14-12-2024", result) -- default %d-%m-%Y
+  it("falls back to default format", function()
+    local result = date.get(nil)
+    assert.are.same("14-12-2024", result)
   end)
 end)
