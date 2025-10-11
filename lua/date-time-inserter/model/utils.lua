@@ -1,16 +1,32 @@
 local feedback = require("date-time-inserter.ui.feedback")
 
 local M = {}
+local tz_abbr = {
+  EST = -5, -- Eastern Standard Time
+  EDT = -4, -- Eastern Daylight Time
+  CST = -6, -- Central Standard Time
+  CDT = -5, -- Central Daylight Time
+  MST = -7, -- Mountain Standard Time
+  MDT = -6, -- Mountain Daylight Time
+  PST = -8, -- Pacific Standard Time
+  PDT = -7, -- Pacific Daylight Time
+  CET = 1, -- Central European Time
+  CEST = 2, -- Central European Summer Time
+  GMT = 0, -- Greenwich Mean Time
+  UTC = 0, -- Universal Coordinated Time
+}
 
 function M.parse_args(fargs, presets)
   if #fargs == 0 then
-    return nil, nil
+    return nil, nil, nil
   end
 
-  local fmt_parts, offset_parts = {}, {}
+  local fmt_parts, offset_parts, tz = {}, {}, nil
 
   for _, arg in ipairs(fargs) do
-    if arg:match("^[+-]") then
+    if arg:match("^UTC[+-]?%d+$") or arg:match("^GMT[+-]?%d+$") or tz_abbr[arg] then
+      tz = arg
+    elseif arg:match("^[+-]?%d*[ymdHMS]$") then
       table.insert(offset_parts, arg)
     else
       table.insert(fmt_parts, arg)
@@ -29,7 +45,17 @@ function M.parse_args(fargs, presets)
     end
   end
 
-  return fmt, offset
+  return fmt, offset, tz
+end
+
+function M.get_utc_time()
+  local ok, result = pcall(os.date, "!*t")
+
+  if not ok or type(result) ~= "table" then
+    result = os.date("*t")
+  end
+
+  return os.time(result)
 end
 
 function M.apply_offset(base_time, offset_str)
@@ -54,6 +80,33 @@ function M.apply_offset(base_time, offset_str)
   end
 
   return (os.time(date_table)) + seconds
+end
+
+function M.apply_tz(base_time, tz)
+  if not tz or tz == "" then
+    return base_time
+  end
+
+  local offset_seconds = 0
+
+  local sign, hours
+  if tz:match("^UTC[+-]?%d+$") then
+    sign, hours = tz:match("^UTC([+-]?)(%d+)$")
+  elseif tz:match("^GMT[+-]?%d+$") then
+    sign, hours = tz:match("^GMT([+-]?)(%d+)$")
+  elseif tz_abbr[tz] then
+    offset_seconds = tz_abbr[tz] * 3600
+  else
+    return base_time -- unknown tz, ignore
+  end
+
+  if hours then
+    local h = tonumber(hours) or 0
+    offset_seconds = (sign == "-" and -h or h) * 3600
+  end
+
+  local utc_time = base_time - os.difftime(base_time, os.time(os.date("!*t", base_time)))
+  return utc_time + offset_seconds
 end
 
 return M

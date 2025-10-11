@@ -76,21 +76,43 @@ If not configured, defaults are used.
 
 The plugin provides the following commands in normal mode:
 
-- **`:InsertDate [FORMAT] [OFFSET]`**: Inserts the current date.
+- **`:InsertDate [FORMAT] [OFFSET] [TIMEZONE]`**: Inserts the current date.
   - `FORMAT`: strftime-style date format (default if omitted), or a preset name
     defined in the `presets` configuration.
   - `OFFSET`: Relative date, e.g., `+3d` (3 days from today), `-1w` (1 week ago),
     `+1y-2m` (1 year forward, 2 months back).
     - Supported units: `d` (days), `w` (weeks), `m` (months), `y` (years).
+  - `TIMEZONE`: Adjusts the output for a given timezone. Supports both explicit
+    UTC/GMT offsets (e.g., `UTC+2`, `GMT-5`) and common abbreviations.
+  `PST`,
+    - Accepted formats:
+      - `UTC+2`, `UTC-5`, `GMT+1`, `GMT-3`
+      - `EST`, `EDT`, `CST`, `CDT`, `MST`, `MDT`, `PST`, `PDT`, `CET`, `CEST`,
+        `GMT`, `UTC`
+    - If omitted, the system's local timezone is used.
 
-- **`:InsertTime [FORMAT] [OFFSET]`**: Inserts the current time.
+- **`:InsertTime [FORMAT] [OFFSET] [TIMEZONE]`**: Inserts the current time.
   - `FORMAT`: strftime-style time format (default if omitted), or a preset name
     defined in the `presets` configuration.
   - `OFFSET`: Relative time, e.g., `+2H` (2 hours from now), `-30M` (30 minutes
     ago), `+1H15M` (1 hour 15 minutes from now).
     - Supported units: `H` (hours), `M` (minutes), `S` (seconds).
-- **`:InsertDateTime`**: Inserts the current date and time using the configured
-  formats and separator.
+  - `TIMEZONE`: Adjusts the output for a given timezone. Supports both explicit
+    UTC/GMT offsets (e.g., `UTC+2`, `GMT-5`) and common abbreviations.
+    - Accepted formats:
+      - `UTC+2`, `UTC-5`, `GMT+1`, `GMT-3`
+      - `EST`, `EDT`, `CST`, `CDT`, `MST`, `MDT`, `PST`, `PDT`, `CET`, `CEST`,
+        `GMT`, `UTC`
+    - If omitted, the system's local timezone is used.
+- **`:InsertDateTime [TIMEZONE]`**: Inserts the current date and time using the
+  configured formats and separator.
+  - `TIMEZONE`: Adjusts the output for a given timezone. Supports both explicit
+    UTC/GMT offsets (e.g., `UTC+2`, `GMT-5`) and common abbreviations.
+    - Accepted formats:
+      - `UTC+2`, `UTC-5`, `GMT+1`, `GMT-3`
+      - `EST`, `EDT`, `CST`, `CDT`, `MST`, `MDT`, `PST`, `PDT`, `CET`, `CEST`,
+        `GMT`, `UTC`
+    - If omitted, the system's local timezone is used.
 
 ## Recommended Key Mappings
 
@@ -153,8 +175,8 @@ print(time.get("%H:%M:%S"))   -- "13:37:00"
 
 #### Functions
 
-- `date.get(fmt?, offset?)` → returns formatted date string
-- `time.get(fmt?, offset?)` → returns formatted time string
+- `date.get(fmt?, offset?, tz?)` → returns formatted date string
+- `time.get(fmt?, offset?, tz?)` → returns formatted time string
 
 Both use the plugin configuration defaults if no format is given.
 
