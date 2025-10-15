@@ -117,42 +117,46 @@ vim.keymap.set(
 )
 ```
 
-## API
+## Lua API
 
-Besides the commands, DateTimeInserter also exposes a Lua API. This is useful
-for snippet managers (like [LuaSnip](https://github.com/L3MON4D3/LuaSnip))
-custom mappings, or other plugins that need formatted date/time strings without
-inserting them directly.
+DateTimeInserter now follows a **controller-based architecture**.
+You can use either the *controller* layer (for buffer insertion) or the *model*
+layer (for returning raw formatted values).
 
-### Examples
+### Controller API
+
+Handles buffer insertion logic — used by commands and can be called directly.
 
 ```lua
-local dti = require("date-time-inserter")
+local controller = require("date-time-inserter.controller")
 
--- Date only
-print(dti.format_date("%Y-%m-%d"))        -- "2025-10-01"
-
--- Time only
-print(dti.format_time("%H:%M:%S"))        -- "13:37:42"
-
--- Date + Time                            -- "01-10-2025 at 13:37"
-print(dti.format_date_time("%d-%m-%Y", nil, "%H:%M", nil))
+-- Insert directly into the buffer
+controller.insert_date({ "+3d" })      -- date 3 days from now
+controller.insert_time({ "+2H30M" })   -- time 2h30m from now
+controller.insert_date_time()          -- date + time
 ```
 
-### Functions
+These functions behave exactly like their corresponding `:Insert*` commands.
 
-- `format_date(fmt?, offset?)`: Returns a formatted date string.
-  - `fmt`: optional `strftime` format (defaults to `config.date_format`)
-  - `offset`: optional relative offset, e.g. `+2d`, `-1w`
-- `format_time(fmt?, offset?)`: Returns a formatted time string.
-  - `fmt`: optional `strftime` format (defaults to `config.time_format`)
-  - `offset`: optional relative offset, e.g. `+3H`, `-30M`
-- `format_date_time(date_fmt?, date_offset?, time_fmt?, time_offset?)`: Returns a
-  formatted date and time string.
-  - `date_fmt`: optional `strftime` date format (defaults to `config.date_format`)
-  - `date_offset`: optional relative date offset, e.g. `+2d`, `-1w`
-  - `time_fmt`: optional `strftime` time format (defaults to `config.time_format`)
-  - `time_offset`: optional relative time offset, e.g. `+3H`, `-30M`
+### Model API
+
+Use this layer to **get formatted strings** without inserting them, ideal for
+snippets, statuslines, or other plugins.
+
+```lua
+local date = require("date-time-inserter.model.date")
+local time = require("date-time-inserter.model.time")
+
+print(date.get("%Y-%m-%d"))   -- "2025-10-10"
+print(time.get("%H:%M:%S"))   -- "13:37:00"
+```
+
+#### Functions
+
+- `date.get(fmt?, offset?)` → returns formatted date string
+- `time.get(fmt?, offset?)` → returns formatted time string
+
+Both use the plugin configuration defaults if no format is given.
 
 ## Deprecations
 

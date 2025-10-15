@@ -1,15 +1,17 @@
 local M = {}
 
+local prefix = "DateTimeInserter: "
+
 function M.error(msg)
-  vim.api.nvim_err_writeln("DateTimeInserter: " .. msg)
+  vim.api.nvim_err_writeln(prefix .. msg)
 end
 
 function M.warn(msg)
-  vim.api.nvim_echo({ { "DateTimeInserter: " .. msg, "WarningMsg" } }, true, {})
+  vim.api.nvim_echo({ { prefix .. msg, "WarningMsg" } }, true, {})
 end
 
 function M.info(msg)
-  vim.api.nvim_echo({ { "DateTimeInserter: " .. msg, "Normal" } }, true, {})
+  vim.api.nvim_echo({ { prefix .. msg, "Normal" } }, true, {})
 end
 
 return M
