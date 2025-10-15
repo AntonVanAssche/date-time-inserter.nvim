@@ -1,5 +1,6 @@
-*date-time-inserter.txt*  Easily insert the current date and/or time into
-                        your Neovim buffer.
+*date-time-inserter.txt*
+Easily insert or format the current date and/or time in Neovim buffers.
+
 *DateTimeInserter*
 
 License: MIT
@@ -8,88 +9,237 @@ Author: Anton Van Assche <https://github.com/AntonVanAssche/>
 ===============================================================================
 CONTENTS                                                  *DateTimeInserter-TOC*
 
-  1. Commands.............|date-time-inserter-commands|
-  2. Configuration........|date-time-inserter-configuration|
-  3. Mapping..............|date-time-inserter-mapping
+  1. Overview.............|DateTimeInserterOverview|
+  2. Commands.............|DateTimeInserterCommands|
+  3. Configuration........|DateTimeInserterConfiguration|
+  4. Deprecations.........|DateTimeInserterDeprecations|
+  5. Mappings.............|DateTimeInserterMappings|
+  6. Lua API..............|DateTimeInserterAPI|
 
 ===============================================================================
+1. Overview                                              *DateTimeInserterOverview*
 
-1. Commands                                            *DateTimeInserterCommands*
+DateTimeInserter is a lightweight Neovim plugin that provides easy commands and
+an extensible Lua API for inserting or formatting dates and times.
 
-InsertDate                                                         *:InsertDate*
+It supports:
+  • Custom `strftime`-based formats
+  • Relative offsets for both date and time
+  • Named presets for common formats
+  • Warnings for deprecated configurations
+  • Clean controller-based design for extensibility
+
+===============================================================================
+2. Commands                                            *DateTimeInserterCommands*
+
+
+InsertDate [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertDate*
 
   Inserts the current date into the buffer.
 
-InsertTime                                                         *:InsertTime*
+  Optional arguments:
+
+    FORMAT   - a `strftime`-style date format (e.g., `%d-%m-%Y`) or a preset
+               defined in your configuration.
+               If omitted, the default configured format is used.
+
+    OFFSET   - relative date adjustment. Use a leading `+` or `-` followed by
+               a number and a unit. Multiple units can be chained.
+               Supported units:
+                 d  - days
+                 m  - months
+                 y  - years
+
+               Examples:
+                 `:InsertDate +3d`     → 3 days from today
+                 `:InsertDate -1m`     → 1 month ago
+                 `:InsertDate +1y-2m`  → 1 year forward, 2 months back
+
+    TIMEZONE - adjusts the output for a given timezone.
+               Supports both explicit UTC/GMT offsets and common abbreviations.
+
+               Accepted formats:
+                 UTC+2, UTC-5, GMT+1, GMT-3
+                 EST, EDT, CST, CDT, MST, MDT, PST, PDT, CET, CEST, GMT, UTC
+
+               Example:
+                 `:InsertDate %Y-%m-%d UTC+2`  → uses UTC+2
+                 `:InsertDate short PST`       → uses Pacific Standard Time
+
+InsertTime [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertTime*
 
   Inserts the current time into the buffer.
 
-InsertDateTime                                                 *:InsertDateTime*
+  Optional arguments:
 
-  Inserts the current date and time into the buffer.
+    FORMAT  - a `strftime`-style time format (e.g., `%H:%M:%S`), or a preset
+              name defined in your configuration.
+              If omitted, the default configured format is used.
+
+    OFFSET  - relative time adjustment. Use a leading `+` or `-` followed by
+              a number and a unit. Multiple units can be combined.
+              Supported units:
+                H  - hours
+                M  - minutes
+                S  - seconds
+
+              Examples:
+                `:InsertTime +2H`     → 2 hours from now
+                `:InsertTime -30M`    → 30 minutes ago
+                `:InsertTime +1H15M`  → 1 hour 15 minutes from now
+
+    TIMEZONE - adjusts the time for a given timezone.
+               Same accepted formats as `:InsertDate`.
+
+               Examples:
+                 `:InsertTime UTC-5`
+                 `:InsertTime CET`
+
+InsertDateTime [TIMEZONE]                                      *:InsertDateTime*
+
+  Inserts the current date and time into the buffer, joined by the configured
+  `date_time_separator`.
+
+  Optional arguments:
+
+    TIMEZONE - adjusts the time for a given timezone.
+               Same accepted formats as `:InsertDate`.
+
+               Examples:
+                 `:InsertDateTime UTC-5`
+                 `:InsertDateTime CET`
 
 ===============================================================================
-2. Configuration                                 *DateTimeInserterConfiguration*
+3. Configuration                                 *DateTimeInserterConfiguration*
 
-  This part of the documentation contains the configuration options for the
-  plugin. It can be configured by passing a table to the `setup` function.
-  Below is an example configuration with all available options.
+You can configure DateTimeInserter by passing a table to its `setup()` function.
 
 >
   require("date-time-inserter").setup {
-    date_format = 'MMDDYYYY',
-    date_separator = '/',
-    date_time_separator = ' at ',
-    time_format = 12,
-    show_seconds = false,
-
+    date_format = "%d-%m-%Y",
+    time_format = "%H:%M",
+    date_time_separator = " at ",
+    presets = {
+      iso = "%Y-%m-%dT%H:%M:%S",
+      short = "%d/%m/%y %H:%M",
+    },
   }
 <
 
+Options:
+
   `date_format`:
-    Defines the date structure using `Y`, `M`, and `D` for year, month, and
-    day (e.g., `MMDDYYYY` → `12/31/2022`).
+    Default `strftime` format for dates (e.g., `%Y-%m-%d`).
 
   `time_format`:
-    Use `12` for 12-hour format and `24` for 24-hour time (e.g., `12` → `1:00 PM`)
-
-  `date_separator`:
-    Character separating date parts (e.g., `-` → `12-31-2022`).
+    Default `strftime` format for times (e.g., `%H:%M:%S`).
 
   `date_time_separator`:
-    String separating date and time (e.g., ` at ` → `12-31-2022 at 11:59 AM`).
+    String used between date and time in combined output.
 
-  `show_seconds`:
-    Set `true` to include seconds (e.g., `true` → `11:59:41 AM`).
+  `presets`:
+    A table mapping preset names to custom formats, allowing you to quickly
+    reuse formats (e.g. `:InsertDate iso`).
 
 ===============================================================================
-3. Mapping                                             *DateTimeInserterMapping*
+4. Deprecations                                   *DateTimeInserterDeprecations*
 
-  This part of the documentation contains recommended mappings for the
-  commands. You can use them as they are or modify them to your liking.
+The following options and formats are deprecated:
+
+  • Date formats:
+      - `MMDDYYYY` → `%m-%d-%Y`
+      - `DDMMYYYY` → `%d-%m-%Y`
+      - `YYYYMMDD` → `%Y-%m-%d`
+      - `YYYYDDMM` → `%Y-%d-%m`
+
+  • Time formats:
+      - `12` → `%I:%M %p`
+      - `24` → `%H:%M`
+      - `show_seconds` → append `:%S` to the format instead
+
+The plugin automatically converts deprecated values to valid equivalents and
+displays a warning message. Update your configuration to use only
+`strftime`-compatible formats.
+
+===============================================================================
+5. Mappings                                             *DateTimeInserterMappings*
+
+Recommended mappings for quick access:
 
 >
   vim.keymap.set(
     "n",
     "<leader>dt",
     "<cmd>InsertDate<CR>",
-    {noremap = true, silent = true}
+    {noremap = true, silent = true, desc = "Insert date"}
   )
 
   vim.keymap.set(
     "n",
     "<leader>tt",
     "<cmd>InsertTime<CR>",
-    {noremap = true, silent = true}
+    {noremap = true, silent = true, desc = "Insert time"}
   )
 
   vim.keymap.set(
     "n",
     "<leader>dtt",
     "<cmd>InsertDateTime<CR>",
-    {noremap = true, silent = true}
+    {noremap = true, silent = true, desc = "Insert date+time"}
   )
 <
+
+===============================================================================
+6. Lua API                                                 *DateTimeInserterAPI*
+
+DateTimeInserter uses a controller-based structure.
+All user commands call into the controller layer, which you can also access
+programmatically for automation or integration with other Lua code.
+
+The plugin no longer exposes `format_*` functions directly — instead, you can
+call the controller’s public methods.
+
+>
+  local controller = require("date-time-inserter.controller")
+
+  -- Insert directly into buffer
+  controller.insert_date({ "+3d" })      -- insert date 3 days from now
+  controller.insert_time({ "+2H30M" })   -- insert time 2 hours 30 mins from now
+  controller.insert_date_time()          -- insert date + time
+
+  -- If you only want to *get* the formatted strings (without inserting),
+  -- you can require the model layer directly:
+  local date = require("date-time-inserter.model.date")
+  local time = require("date-time-inserter.model.time")
+
+  print(date.get("%Y-%m-%d"))            -- → "2025-10-10"
+  print(time.get("%H:%M:%S"))            -- → "13:37:00"
+<
+Controller API                                   *DateTimeInserterControllerAPI*
+>
+  controller.insert_date(fargs)
+  controller.insert_time(fargs)
+  controller.insert_date_time()
+<
+
+  These functions perform the same logic as the user commands and will insert
+  directly into the current buffer.
+
+Model API                                             *DateTimeInserterModelAPI*
+>
+  local date = require("date-time-inserter.model.date")
+  local time = require("date-time-inserter.model.time")
+<
+
+  • `date.get(fmt?, offset?, tz?)`
+    → returns a formatted date string using the provided or configured format.
+
+  • `time.get(fmt?, offset?, tz?)`
+    → returns a formatted time string using the provided or configured format.
+
+This separation allows both plugin users and developers to choose between:
+  - **Controller layer:** handles insertion and command logic.
+  - **Model layer:** handles pure formatting and computation.
 
 ===============================================================================
 vim:tw=78:ts=2:sts=2:sw=2:ft=help:norl:

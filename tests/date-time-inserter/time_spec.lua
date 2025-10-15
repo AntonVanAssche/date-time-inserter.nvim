@@ -1,76 +1,46 @@
--- tests/date-time-inserter/time_spec.lua
-
-local M = require("date-time-inserter.time")
+local time = require("date-time-inserter.model.time")
+local config = require("date-time-inserter.model.config")
 local assert = require("luassert")
-local os = require("os")
 
-local mock_time = "15:45:30"
-os.date = function()
-  return mock_time
+local real_os_date = os.date
+
+os.date = function(fmt)
+  if fmt == "!*t" or fmt == "*t" then
+    return real_os_date(fmt)
+  end
+
+  local mock = {
+    ["%H:%M:%S"] = "15:45:30",
+    ["%H:%M"] = "15:45",
+    ["%I:%M:%S %p"] = "03:45:30 PM",
+    ["%I:%M %p"] = "03:45 PM",
+  }
+
+  return mock[fmt] or "?"
 end
 
 describe("Time Format Tests", function()
-  it("should return the time in 24-hour format with seconds", function()
-    local result = M.setup(24, true)
+  before_each(function()
+    config.setup({})
+  end)
+
+  it("strftime format with seconds", function()
+    local result = time.get("%H:%M:%S")
     assert.are.same("15:45:30", result)
   end)
 
-  it("should return the time in 24-hour format without seconds", function()
-    local result = M.setup(24, false)
+  it("strftime format without seconds", function()
+    local result = time.get("%H:%M")
     assert.are.same("15:45", result)
   end)
 
-  it("should return the time in 12-hour format with seconds (PM)", function()
-    local result = M.setup(12, true)
-    assert.are.same("03:45:30 PM", result)
-  end)
-
-  it("should return the time in 12-hour format without seconds (PM)", function()
-    local result = M.setup(12, false)
+  it("strftime 12-hour format", function()
+    local result = time.get("%I:%M %p")
     assert.are.same("03:45 PM", result)
   end)
 
-  it("should return the time in 12-hour format with seconds (AM)", function()
-    mock_time = "00:15:10"
-    local result = M.setup(12, true)
-    assert.are.same("12:15:10 AM", result)
-  end)
-
-  it("should return the time in 12-hour format without seconds (AM)", function()
-    mock_time = "00:15:10"
-    local result = M.setup(12, false)
-    assert.are.same("12:15 AM", result)
-  end)
-
-  it("should handle midnight in 12-hour format with seconds (AM)", function()
-    os.date = function()
-      return "00:15:10"
-    end
-    local result = M.setup(12, true)
-    assert.are.same("12:15:10 AM", result)
-  end)
-
-  it("should handle midnight in 24-hour format with seconds", function()
-    os.date = function()
-      return "00:15:10"
-    end
-    local result = M.setup(24, true)
-    assert.are.same("00:15:10", result)
-  end)
-
-  it("should handle noon in 12-hour format without seconds (PM)", function()
-    os.date = function()
-      return "12:00:00"
-    end
-    local result = M.setup(12, false)
-    assert.are.same("12:00 PM", result)
-  end)
-
-  it("should handle noon in 24-hour format with seconds", function()
-    os.date = function()
-      return "12:00:00"
-    end
-    local result = M.setup(24, true)
-    assert.are.same("12:00:00", result)
+  it("falls back to default", function()
+    local result = time.get(nil)
+    assert.are.same("15:45", result)
   end)
 end)
