@@ -1,3 +1,5 @@
+local feedback = require("date-time-inserter.ui.feedback")
+
 local M = {}
 
 function M.parse_args(fargs, presets)
@@ -18,8 +20,13 @@ function M.parse_args(fargs, presets)
   local fmt = #fmt_parts > 0 and table.concat(fmt_parts, " ") or nil
   local offset = #offset_parts > 0 and table.concat(offset_parts, " ") or nil
 
-  if fmt and presets and presets[fmt] then
-    fmt = presets[fmt]
+  if fmt and presets then
+    if presets[fmt] then
+      fmt = presets[fmt]
+    else
+      feedback.error(("Unknown date/time preset: '%s'"):format(fmt))
+      fmt = nil
+    end
   end
 
   return fmt, offset
