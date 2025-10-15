@@ -7,20 +7,21 @@ local feedback = require("date-time-inserter.ui.feedback")
 local M = {}
 
 function M.insert_date(fargs)
-  local fmt, offset = utils.parse_args(fargs, config.values.presets)
-  local output = date.get(fmt, offset)
+  local fmt, offset, tz = utils.parse_args(fargs, config.values.presets)
+  local output = date.get(fmt, offset, tz)
   vim.api.nvim_put({ output }, "c", true, true)
 end
 
 function M.insert_time(fargs)
-  local fmt, offset = utils.parse_args(fargs, config.values.presets)
-  local output = time.get(fmt, offset)
+  local fmt, offset, tz = utils.parse_args(fargs, config.values.presets)
+  local output = time.get(fmt, offset, tz)
   vim.api.nvim_put({ output }, "c", true, true)
 end
 
-function M.insert_date_time()
-  local d = date.get()
-  local t = time.get()
+function M.insert_date_time(fargs)
+  local _, _, tz = utils.parse_args(fargs, config.values.presets)
+  local d = date.get(nil, nil, tz)
+  local t = time.get(nil, nil, tz)
   local output = d .. config.values.date_time_separator .. t
   vim.api.nvim_put({ output }, "c", true, true)
 end
@@ -29,7 +30,7 @@ function M.register_commands()
   local cmds = {
     { "InsertDate", M.insert_date, "Insert the current date.", { nargs = "*" } },
     { "InsertTime", M.insert_time, "Insert the current time.", { nargs = "*" } },
-    { "InsertDateTime", M.insert_date_time, "Insert current date + time.", { nargs = 0 } },
+    { "InsertDateTime", M.insert_date_time, "Insert current date + time.", { nargs = "*" } },
   }
 
   for _, c in ipairs(cmds) do

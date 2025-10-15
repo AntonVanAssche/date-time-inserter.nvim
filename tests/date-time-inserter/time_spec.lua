@@ -2,13 +2,20 @@ local time = require("date-time-inserter.model.time")
 local config = require("date-time-inserter.model.config")
 local assert = require("luassert")
 
+local real_os_date = os.date
+
 os.date = function(fmt)
+  if fmt == "!*t" or fmt == "*t" then
+    return real_os_date(fmt)
+  end
+
   local mock = {
     ["%H:%M:%S"] = "15:45:30",
     ["%H:%M"] = "15:45",
     ["%I:%M:%S %p"] = "03:45:30 PM",
     ["%I:%M %p"] = "03:45 PM",
   }
+
   return mock[fmt] or "?"
 end
 

@@ -3,18 +3,18 @@ local utils = require("date-time-inserter.model.utils")
 
 local M = {}
 
-function M.get(fmt, offset)
+function M.get(fmt, offset, tz)
   fmt = fmt or config.values.time_format
-  local time = os.time()
+  local utc = utils.get_utc_time()
 
   if offset then
-    time = utils.apply_offset(time, offset)
+    utc = utils.apply_offset(utc, offset)
     if offset:find("[S]") and not fmt:find("%%S") then
       fmt = fmt .. ":%S"
     end
   end
 
-  return os.date(fmt, time)
+  return os.date(fmt, utils.apply_tz(utc, tz))
 end
 
 return M

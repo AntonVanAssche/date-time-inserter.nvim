@@ -32,30 +32,41 @@ It supports:
 ===============================================================================
 2. Commands                                            *DateTimeInserterCommands*
 
-InsertDate [FORMAT] [OFFSET]                                       *:InsertDate*
+
+InsertDate [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertDate*
 
   Inserts the current date into the buffer.
 
   Optional arguments:
 
-    FORMAT  - a `strftime`-style date format (e.g., `%d-%m-%Y`) or a preset
-              defined in your configuration.
-              If omitted, the default configured format is used.
+    FORMAT   - a `strftime`-style date format (e.g., `%d-%m-%Y`) or a preset
+               defined in your configuration.
+               If omitted, the default configured format is used.
 
-    OFFSET  - relative date adjustment. Use a leading `+` or `-` followed by
-              a number and a unit. Multiple units can be chained.
-              Supported units:
-                d  - days
-                m  - months
-                y  - years
+    OFFSET   - relative date adjustment. Use a leading `+` or `-` followed by
+               a number and a unit. Multiple units can be chained.
+               Supported units:
+                 d  - days
+                 m  - months
+                 y  - years
 
-              Examples:
-                `:InsertDate +3d`     → 3 days from today
-                `:InsertDate -1m`     → 1 month ago
-                `:InsertDate +1y-2m`  → 1 year forward, 2 months back
+               Examples:
+                 `:InsertDate +3d`     → 3 days from today
+                 `:InsertDate -1m`     → 1 month ago
+                 `:InsertDate +1y-2m`  → 1 year forward, 2 months back
 
+    TIMEZONE - adjusts the output for a given timezone.
+               Supports both explicit UTC/GMT offsets and common abbreviations.
 
-InsertTime [FORMAT] [OFFSET]                                       *:InsertTime*
+               Accepted formats:
+                 UTC+2, UTC-5, GMT+1, GMT-3
+                 EST, EDT, CST, CDT, MST, MDT, PST, PDT, CET, CEST, GMT, UTC
+
+               Example:
+                 `:InsertDate %Y-%m-%d UTC+2`  → uses UTC+2
+                 `:InsertDate short PST`       → uses Pacific Standard Time
+
+InsertTime [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertTime*
 
   Inserts the current time into the buffer.
 
@@ -77,11 +88,26 @@ InsertTime [FORMAT] [OFFSET]                                       *:InsertTime*
                 `:InsertTime -30M`    → 30 minutes ago
                 `:InsertTime +1H15M`  → 1 hour 15 minutes from now
 
+    TIMEZONE - adjusts the time for a given timezone.
+               Same accepted formats as `:InsertDate`.
 
-InsertDateTime                                                 *:InsertDateTime*
+               Examples:
+                 `:InsertTime UTC-5`
+                 `:InsertTime CET`
+
+InsertDateTime [TIMEZONE]                                      *:InsertDateTime*
 
   Inserts the current date and time into the buffer, joined by the configured
   `date_time_separator`.
+
+  Optional arguments:
+
+    TIMEZONE - adjusts the time for a given timezone.
+               Same accepted formats as `:InsertDate`.
+
+               Examples:
+                 `:InsertDateTime UTC-5`
+                 `:InsertDateTime CET`
 
 ===============================================================================
 3. Configuration                                 *DateTimeInserterConfiguration*
@@ -205,10 +231,10 @@ Model API                                             *DateTimeInserterModelAPI*
   local time = require("date-time-inserter.model.time")
 <
 
-  • `date.get(fmt?, offset?)`
+  • `date.get(fmt?, offset?, tz?)`
     → returns a formatted date string using the provided or configured format.
 
-  • `time.get(fmt?, offset?)`
+  • `time.get(fmt?, offset?, tz?)`
     → returns a formatted time string using the provided or configured format.
 
 This separation allows both plugin users and developers to choose between:

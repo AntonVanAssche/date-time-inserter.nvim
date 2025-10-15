@@ -2,10 +2,21 @@ local date = require("date-time-inserter.model.date")
 local config = require("date-time-inserter.model.config")
 local assert = require("luassert")
 
+local real_os_date = os.date
 os.date = function(fmt)
-  if fmt == "%m/%d/%Y" then return "12/14/2024" end
-  if fmt == "%d-%m-%Y" then return "14-12-2024" end
-  return "?"
+  if fmt == "!*t" or fmt == "*t" then
+    return real_os_date(fmt)
+  end
+
+  local mock = {
+    ["%H:%M:%S"] = "15:45:30",
+    ["%H:%M"] = "15:45",
+    ["%I:%M:%S %p"] = "03:45:30 PM",
+    ["%I:%M %p"] = "03:45 PM",
+    ["%m/%d/%Y"] = "12/14/2024",
+    ["%d-%m-%Y"] = "14-12-2024",
+  }
+  return mock[fmt] or "?"
 end
 
 describe("Date Format Tests", function()
