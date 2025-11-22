@@ -16,27 +16,58 @@ local tz_abbr = {
   UTC = 0, -- Universal Coordinated Time
 }
 
+local function is_tz(arg)
+  return arg:match("^UTC[+-]?%d+$") or arg:match("^GMT[+-]?%d+$") or tz_abbr[arg] ~= nil
+end
+
+local function is_format(arg)
+  return arg:find("%%") ~= nil
+end
+
+local function extract_offsets(arg)
+  local results = {}
+
+  local leading = arg:match("^([+-])")
+  local body = leading and arg:sub(2) or arg
+
+  for sign, num, unit in body:gmatch("([+-]?)(%d+)([ymdHMS])") do
+    -- if the token has no sign, inherit the leading one (if any)
+    local final_sign = (sign ~= "" and sign) or leading or "+"
+    table.insert(results, final_sign .. num .. unit)
+  end
+
+  return results
+end
+
 function M.parse_args(fargs, presets)
   if #fargs == 0 then
     return nil, nil, nil
   end
 
-  local fmt_parts, offset_parts, tz = {}, {}, nil
+  local fmt_parts = {}
+  local offset_parts = {}
+  local tz = nil
 
   for _, arg in ipairs(fargs) do
-    if arg:match("^UTC[+-]?%d+$") or arg:match("^GMT[+-]?%d+$") or tz_abbr[arg] then
+    if is_tz(arg) then
       tz = arg
-    elseif arg:match("^[+-]?%d*[ymdHMS]$") then
-      table.insert(offset_parts, arg)
+    elseif is_format(arg) then
+      table.insert(fmt_parts, arg)
+    elseif arg:match("[+-]%d+[ymdHMS]") then
+      for _, off in ipairs(extract_offsets(arg)) do
+        table.insert(offset_parts, off)
+      end
     else
+      -- treat as preset key
       table.insert(fmt_parts, arg)
     end
   end
 
-  local fmt = #fmt_parts > 0 and table.concat(fmt_parts, " ") or nil
-  local offset = #offset_parts > 0 and table.concat(offset_parts, " ") or nil
+  local fmt = (#fmt_parts > 0) and table.concat(fmt_parts, " ") or nil
+  local offset = (#offset_parts > 0) and table.concat(offset_parts, " ") or nil
 
-  if fmt and presets then
+  -- Only preset-lookup when format doesn't contain %
+  if fmt and presets and not fmt:find("%%") then
     if presets[fmt] then
       fmt = presets[fmt]
     else
