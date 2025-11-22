@@ -48,16 +48,6 @@ function M.parse_args(fargs, presets)
   return fmt, offset, tz
 end
 
-function M.get_utc_time()
-  local ok, result = pcall(os.date, "!*t")
-
-  if not ok or type(result) ~= "table" then
-    result = os.date("*t")
-  end
-
-  return os.time(result)
-end
-
 function M.apply_offset(base_time, offset_str)
   local date_table = os.date("*t", base_time)
   local seconds = 0
@@ -87,26 +77,32 @@ function M.apply_tz(base_time, tz)
     return base_time
   end
 
-  local offset_seconds = 0
+  local local_sign, local_h, local_m = os.date("%z"):match("([+-])(%d%d)(%d%d)")
+  local local_offset = 0
+  if local_sign then
+    local_offset = tonumber(local_h) * 3600 + tonumber(local_m) * 60
+    if local_sign == "-" then
+      local_offset = -local_offset
+    end
+  end
 
-  local sign, hours
-  if tz:match("^UTC[+-]?%d+$") then
-    sign, hours = tz:match("^UTC([+-]?)(%d+)$")
-  elseif tz:match("^GMT[+-]?%d+$") then
+  local offset_seconds = 0
+  local sign, hours = tz:match("^UTC([+-]?)(%d+)$")
+  if not hours then
     sign, hours = tz:match("^GMT([+-]?)(%d+)$")
-  elseif tz_abbr[tz] then
-    offset_seconds = tz_abbr[tz] * 3600
-  else
-    return base_time -- unknown tz, ignore
   end
 
   if hours then
-    local h = tonumber(hours) or 0
+    local h = tonumber(hours)
     offset_seconds = (sign == "-" and -h or h) * 3600
+  elseif tz_abbr[tz] then
+    offset_seconds = tz_abbr[tz] * 3600
+  else
+    return base_time
   end
 
-  local utc_time = base_time - os.difftime(base_time, os.time(os.date("!*t", base_time)))
-  return utc_time + offset_seconds
+  local utc = base_time - local_offset
+  return utc + offset_seconds
 end
 
 return M

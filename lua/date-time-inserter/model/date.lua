@@ -5,13 +5,13 @@ local M = {}
 
 function M.get(fmt, offset, tz)
   fmt = fmt or config.values.date_format
-  local utc = utils.get_utc_time()
+  local base_time = os.time()
 
   if offset then
-    utc = utils.apply_offset(utc, offset)
+    base_time = utils.apply_offset(base_time, offset)
   end
 
-  return os.date(fmt, utils.apply_tz(utc, tz))
+  return os.date(fmt, utils.apply_tz(base_time, tz))
 end
 
 return M
