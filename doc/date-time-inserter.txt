@@ -44,7 +44,9 @@ InsertDate [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertDate*
                If omitted, the default configured format is used.
 
     OFFSET   - relative date adjustment. Use a leading `+` or `-` followed by
-               a number and a unit. Multiple units can be chained.
+               a number and a unit. Multiple units can be chained. Arithmetic
+               operations are processed left to right, and can be either
+               chained as one argument or provided as separate arguments.
                Supported units:
                  d  - days
                  m  - months
@@ -77,7 +79,9 @@ InsertTime [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertTime*
               If omitted, the default configured format is used.
 
     OFFSET  - relative time adjustment. Use a leading `+` or `-` followed by
-              a number and a unit. Multiple units can be combined.
+              a number and a unit. Multiple units can be combined. Arithmetic
+              operations are processed left to right, and can be either chained
+              as one argument or provided as separate arguments.
               Supported units:
                 H  - hours
                 M  - minutes
