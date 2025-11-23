@@ -44,7 +44,9 @@ InsertDate [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertDate*
                If omitted, the default configured format is used.
 
     OFFSET   - relative date adjustment. Use a leading `+` or `-` followed by
-               a number and a unit. Multiple units can be chained.
+               a number and a unit. Multiple units can be chained. Arithmetic
+               operations are processed left to right, and can be either
+               chained as one argument or provided as separate arguments.
                Supported units:
                  d  - days
                  m  - months
@@ -72,21 +74,23 @@ InsertTime [FORMAT] [OFFSET] [TIMEZONE]                            *:InsertTime*
 
   Optional arguments:
 
-    FORMAT  - a `strftime`-style time format (e.g., `%H:%M:%S`), or a preset
-              name defined in your configuration.
-              If omitted, the default configured format is used.
+    FORMAT   - a `strftime`-style time format (e.g., `%H:%M:%S`), or a preset
+               name defined in your configuration.
+               If omitted, the default configured format is used.
 
-    OFFSET  - relative time adjustment. Use a leading `+` or `-` followed by
-              a number and a unit. Multiple units can be combined.
-              Supported units:
-                H  - hours
-                M  - minutes
-                S  - seconds
+    OFFSET   - relative time adjustment. Use a leading `+` or `-` followed by
+               a number and a unit. Multiple units can be combined. Arithmetic
+               operations are processed left to right, and can be either
+               chained as one argument or provided as separate arguments.
+               Supported units:
+                 H  - hours
+                 M  - minutes
+                 S  - seconds
 
-              Examples:
-                `:InsertTime +2H`     → 2 hours from now
-                `:InsertTime -30M`    → 30 minutes ago
-                `:InsertTime +1H15M`  → 1 hour 15 minutes from now
+               Examples:
+                 `:InsertTime +2H`     → 2 hours from now
+                 `:InsertTime -30M`    → 30 minutes ago
+                 `:InsertTime +1H15M`  → 1 hour 15 minutes from now
 
     TIMEZONE - adjusts the time for a given timezone.
                Same accepted formats as `:InsertDate`.
